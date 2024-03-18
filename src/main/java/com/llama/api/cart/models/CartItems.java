@@ -1,2 +1,27 @@
-package com.llama.api.cart.models;public class CartItems {
+package com.llama.api.cart.models;
+
+import com.llama.api.products.models.Products;
+import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.UUID;
+
+@Entity
+@Table(name = "CartItems")
+@Data
+@NoArgsConstructor
+public class CartItems {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "user_id", columnDefinition = "uuid", nullable = false, updatable = false)
+    UUID id;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    Products product;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "cart_id")
+    Cart cart;
 }
