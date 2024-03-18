@@ -51,6 +51,6 @@ public class Users {
     @JsonProperty("date_joined")
     Date dateJoined;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     UserProfile userProfile;
 }

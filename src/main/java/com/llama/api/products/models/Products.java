@@ -1,5 +1,6 @@
 package com.llama.api.products.models;
 
+import com.llama.api.cart.models.CartItems;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -29,6 +30,9 @@ public class Products {
     @Column
     String sku;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<ProductImages> productImages;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    List<CartItems> cartItems;
 }

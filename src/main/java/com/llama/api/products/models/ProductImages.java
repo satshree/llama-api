@@ -31,7 +31,7 @@ public class ProductImages {
     @Column
     String image;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "product_id")
     Products product;
 }
