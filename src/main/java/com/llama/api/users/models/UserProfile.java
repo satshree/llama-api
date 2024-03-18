@@ -1,5 +1,6 @@
 package com.llama.api.users.models;
 
+import com.llama.api.cart.models.Cart;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,5 +26,8 @@ public class UserProfile {
     @OneToOne
     @JoinColumn(name = "user_id")
     Users user;
-    // Cart
+
+    @OneToOne
+    @JoinColumn(name = "cart_id")
+    Cart cart;
 }

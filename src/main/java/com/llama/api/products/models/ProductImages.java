@@ -30,4 +30,8 @@ public class ProductImages {
 
     @Column
     String image;
+
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    Products product;
 }

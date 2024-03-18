@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -27,4 +28,7 @@ public class Products {
 
     @Column
     String sku;
+
+    @OneToMany(mappedBy = "product")
+    List<ProductImages> productImages;
 }
