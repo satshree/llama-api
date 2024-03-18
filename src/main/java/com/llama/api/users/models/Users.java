@@ -51,6 +51,6 @@ public class Users {
     @JsonProperty("date_joined")
     Date dateJoined;
 
-//    @OneToOne(mappedBy = "user")
-//    UserProfile userProfile;
+    @OneToOne(mappedBy = "user")
+    UserProfile userProfile;
 }
