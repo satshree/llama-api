@@ -1,1 +1,4 @@
 com/llama/api/LlamaApiApplication.class
+com/llama/api/config/LocalProperties.class
+com/llama/api/users/models/Users.class
+com/llama/api/users/models/UserProfile.class
