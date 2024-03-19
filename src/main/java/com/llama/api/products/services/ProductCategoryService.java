@@ -3,10 +3,12 @@ package com.llama.api.products.services;
 import com.llama.api.products.models.ProductCategory;
 import com.llama.api.products.repository.ProductCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
+@Service
 public class ProductCategoryService {
     @Autowired
     ProductCategoryRepository productCategoryRepository;
