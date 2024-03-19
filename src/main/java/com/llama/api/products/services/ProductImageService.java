@@ -59,9 +59,7 @@ public class ProductImageService {
         pImage.setImage(imageURL);
 
         // SAVE IMAGE TO DATABASE
-        productImageRepository.save(pImage);
-
-        return pImage;
+        return productImageRepository.save(pImage);
     }
 
     public ProductImages updateImage(String id, ProductImageDTO image) {
