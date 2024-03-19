@@ -32,6 +32,10 @@ public class Products {
     @Column
     String sku;
 
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "category_id")
+    ProductCategory category;
+
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<ProductImages> productImages;
 
