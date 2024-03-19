@@ -24,4 +24,7 @@ public class CartItems {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "cart_id")
     Cart cart;
+
+    @Column
+    Integer quantity;
 }
