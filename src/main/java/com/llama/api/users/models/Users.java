@@ -1,11 +1,13 @@
 package com.llama.api.users.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.llama.api.wishlist.models.Wishlist;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.persistence.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -53,4 +55,7 @@ public class Users {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     UserProfile userProfile;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    List<Wishlist> wishlists;
 }

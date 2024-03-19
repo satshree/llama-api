@@ -2,6 +2,7 @@ package com.llama.api.products.models;
 
 import com.llama.api.billings.models.Orders;
 import com.llama.api.cart.models.CartItems;
+import com.llama.api.wishlist.models.Wishlist;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -39,4 +40,7 @@ public class Products {
 
     @OneToMany(mappedBy = "product", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Orders> orders;
+
+    @OneToMany(mappedBy = "product", fetch = FetchType.LAZY)
+    List<Wishlist> wishlists;
 }
