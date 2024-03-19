@@ -5,7 +5,6 @@ import com.llama.api.products.dto.ProductImageDTO;
 import com.llama.api.products.models.ProductImages;
 import com.llama.api.products.models.Products;
 import com.llama.api.products.repository.ProductImageRepository;
-import com.llama.api.products.repository.ProductRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,36 +20,35 @@ public class ProductImageService {
     ProductImageRepository productImageRepository;
 
     @Autowired
-    ProductRepository productRepository;
+    ProductService productService;
 
     @Autowired
     CloudinaryServiceImpl cloudinaryService;
 
     public List<ProductImages> getAllImages(String productID) {
-        Products product = productRepository.findById(UUID.fromString(productID)).orElseThrow(
-                // implement later
-        );
+        Products product = productService.getProduct(productID);
 
         return productImageRepository.findByProduct(product);
     }
 
     public ProductImages getImage(String id) {
-        return productImageRepository.findById(UUID.fromString(id)).orElseThrow(
-                // implement later
-        );
+        return productImageRepository
+                .findById(
+                        UUID.fromString(id)
+                ).orElseThrow(
+                        // implement later
+                );
     }
 
     public ProductImages addImage(String productID, MultipartFile image) throws IOException {
         // GET PRODUCT
-        Products product = productRepository.findById(UUID.fromString(productID)).orElseThrow(
-                // implement later
-        );
+        Products product = productService.getProduct(productID);
 
         // PRODUCT IMAGE OBJECT
         ProductImages pImage = new ProductImages();
+        pImage.setProduct(product);
         pImage.setIname(image.getName());
         pImage.setSize((int) image.getSize());
-
         pImage.setName(pImage.getIname().split("\\.")[0]);
         pImage.setExt(pImage.getIname().split("\\.")[1]);
 
@@ -63,9 +61,7 @@ public class ProductImageService {
     }
 
     public ProductImages updateImage(String id, ProductImageDTO image) {
-        ProductImages pImage = productImageRepository.findById(UUID.fromString(id)).orElseThrow(
-                // implement later
-        );
+        ProductImages pImage = getImage(id);
 
         BeanUtils.copyProperties(image, pImage);
         return productImageRepository.save(pImage);

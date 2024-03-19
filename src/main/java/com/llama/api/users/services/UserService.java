@@ -42,24 +42,14 @@ public class UserService {
     }
 
     public Users updateUser(String id, UserDTO user) {
-        Users userModel = userRepository
-                .findById(
-                        UUID.fromString(id)
-                ).orElseThrow(
-                        // implement later
-                );
+        Users userModel = getUser(id);
 
         BeanUtils.copyProperties(user, userModel);
         return userRepository.save(userModel);
     }
 
     public void setPassword(String id, String password) {
-        Users user = userRepository
-                .findById(
-                        UUID.fromString(id)
-                ).orElseThrow(
-                        // implement later
-                );
+        Users user = getUser(id);
 
         user.setPassword(UserUtils.hashPassword(password));
 

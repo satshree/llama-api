@@ -43,12 +43,7 @@ public class ProductService {
     }
 
     public Products updateProduct(String id, ProductDTO product) {
-        Products productModel = productRepository
-                .findById(
-                        UUID.fromString(id)
-                ).orElseThrow(
-                        // implement later
-                );
+        Products productModel = getProduct(id);
 
         BeanUtils.copyProperties(product, productModel);
 

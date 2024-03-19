@@ -1,5 +1,6 @@
 package com.llama.api.users.services;
 
+import com.llama.api.users.dto.UserDTO;
 import com.llama.api.users.dto.UserProfileDTO;
 import com.llama.api.users.models.UserProfile;
 import com.llama.api.users.models.Users;
@@ -17,15 +18,13 @@ public class UserProfileService {
     UserProfileRepository userProfileRepository;
 
     @Autowired
+    UserService userService;
+
+    @Autowired
     UserRepository userRepository;
 
     public UserProfile getProfile(String userID) {
-        Users user = userRepository
-                .findById(
-                        UUID.fromString(userID)
-                ).orElseThrow(
-                        // implement later
-                );
+        Users user = userService.getUser(userID);
 
         return userProfileRepository
                 .findById(
@@ -37,38 +36,28 @@ public class UserProfileService {
     }
 
     public UserProfile addProfile(String userID, UserProfileDTO profile) {
-        Users user = userRepository
-                .findById(
-                        UUID.fromString(userID)
-                ).orElseThrow(
-                        // implement later
-                );
+        Users user = userService.getUser(userID);
 
         UserProfile userProfile = new UserProfile();
         BeanUtils.copyProperties(profile, userProfile);
 
         user.setUserProfile(userProfile);
 
-        userRepository.save(user);
+        Users result = userRepository.save(user);
 
-        return user.getUserProfile();
+        return result.getUserProfile();
     }
 
     public UserProfile updateProfile(String userID, UserProfileDTO profile) {
-        Users user = userRepository
-                .findById(
-                        UUID.fromString(userID)
-                ).orElseThrow(
-                        // implement later
-                );
+        Users user = userService.getUser(userID);
 
         UserProfile userProfile = user.getUserProfile();
         BeanUtils.copyProperties(profile, userProfile);
 
         user.setUserProfile(userProfile);
 
-        userRepository.save(user);
+        Users result = userRepository.save(user);
 
-        return userProfile;
+        return result.getUserProfile();
     }
 }
