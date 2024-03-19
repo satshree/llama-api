@@ -1,6 +1,7 @@
 package com.llama.api.users.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.llama.api.billings.models.Billings;
 import com.llama.api.wishlist.models.Wishlist;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -58,4 +59,7 @@ public class Users {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     List<Wishlist> wishlists;
+
+    @OneToMany(mappedBy = "user")
+    List<Billings> bills;
 }

@@ -1,5 +1,6 @@
 package com.llama.api.billings.models;
 
+import com.llama.api.users.models.Users;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,6 +29,10 @@ public class Billings {
 
     @Column(name = "grand_total")
     Double grandTotal;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    Users user;
 
     @OneToMany(mappedBy = "bill")
     List<Orders> orders;
