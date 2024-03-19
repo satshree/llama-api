@@ -1,6 +1,7 @@
 package com.llama.api.products.services;
 
 import com.llama.api.products.dto.ProductDTO;
+import com.llama.api.products.models.ProductCategory;
 import com.llama.api.products.models.Products;
 import com.llama.api.products.repository.ProductRepository;
 import org.springframework.beans.BeanUtils;
@@ -15,13 +16,14 @@ public class ProductService {
     @Autowired
     ProductRepository productRepository;
 
+    @Autowired
+    ProductCategoryService productCategoryService;
+
     public List<Products> getAllProducts() {
         return productRepository.findAll();
     }
 
     public Products getProduct(String id) {
-        UUID productId = UUID.fromString(id);
-
         return productRepository
                 .findById(
                         UUID.fromString(id)
@@ -39,7 +41,14 @@ public class ProductService {
 
         BeanUtils.copyProperties(product, productModel);
 
-        return productRepository.save(productModel);
+        // SAVE BEFORE SETTING THE CATEGORY
+        productModel = productRepository.save(productModel);
+
+        // SET THE CATEGORY; SAVES PRODUCT AS WELL
+        return setProductCategory(
+                productModel.getId().toString(),
+                product.getCategoryID()
+        );
     }
 
     public Products updateProduct(String id, ProductDTO product) {
@@ -47,7 +56,23 @@ public class ProductService {
 
         BeanUtils.copyProperties(product, productModel);
 
-        return productRepository.save(productModel);
+        // SAVE BEFORE UPDATING THE CATEGORY
+        productModel = productRepository.save(productModel);
+
+        // UPDATE THE CATEGORY; SAVES PRODUCT AS WELL
+        return setProductCategory(
+                productModel.getId().toString(),
+                product.getCategoryID()
+        );
+    }
+
+    public Products setProductCategory(String productID, String categoryID) {
+        ProductCategory category = productCategoryService.getCategory(categoryID);
+        Products product = getProduct(productID);
+
+        product.setCategory(category);
+
+        return productRepository.save(product);
     }
 
     public void deleteProduct(String id) {
