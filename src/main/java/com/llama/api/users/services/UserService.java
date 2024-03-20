@@ -4,7 +4,6 @@ import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.users.UserUtils;
 import com.llama.api.users.dto.UserDTO;
 import com.llama.api.users.dto.UserProfileDTO;
-import com.llama.api.users.models.UserProfile;
 import com.llama.api.users.models.Users;
 import com.llama.api.users.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -49,7 +48,7 @@ public class UserService {
         BeanUtils.copyProperties(user, userModel);
 
         userModel = userRepository.save(userModel);
-        
+
         // SAVE PROFILE
         userModel.setUserProfile(
                 userProfileService.addProfile(
