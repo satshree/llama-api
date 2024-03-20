@@ -7,6 +7,7 @@ import com.llama.api.users.models.UserProfile;
 import com.llama.api.users.models.Users;
 import com.llama.api.users.repository.UserProfileRepository;
 import com.llama.api.users.repository.UserRepository;
+import com.llama.api.users.serializer.UserSerialized;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -37,6 +38,16 @@ public class UserService implements UserDetailsService {
                 ).orElseThrow(
                         () -> new ResourceNotFound("User does not exist")
                 );
+    }
+
+    public UserSerialized getUserSerialized(String id) throws ResourceNotFound {
+        Users user = getUser(id);
+
+        UserSerialized userSerialized = new UserSerialized();
+        BeanUtils.copyProperties(user, userSerialized);
+        BeanUtils.copyProperties(user.getUserProfile(), userSerialized);
+
+        return userSerialized;
     }
 
     public Users getUserByUsername(String username) throws UsernameNotFoundException {

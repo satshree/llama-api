@@ -101,7 +101,7 @@ public class AuthenticationController {
         Map<String, Object> response = new HashMap<>();
 
         response.put("message", "User registered");
-        response.put("user", userModel);
+        response.put("user", userService.getUserSerialized(userModel.getId().toString()));
 
         return ResponseEntity.ok(response);
     }
