@@ -4,7 +4,9 @@ import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.users.UserUtils;
 import com.llama.api.users.dto.UserDTO;
 import com.llama.api.users.dto.UserProfileDTO;
+import com.llama.api.users.models.UserProfile;
 import com.llama.api.users.models.Users;
+import com.llama.api.users.repository.UserProfileRepository;
 import com.llama.api.users.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +24,7 @@ public class UserService implements UserDetailsService {
     UserRepository userRepository;
 
     @Autowired
-    UserProfileService userProfileService;
+    UserProfileRepository userProfileRepository;
 
     public List<Users> getAllUsers() {
         return userRepository.findAll();
@@ -57,10 +59,10 @@ public class UserService implements UserDetailsService {
         userModel = userRepository.save(userModel);
 
         // SAVE PROFILE
+        UserProfile userProfile = new UserProfile();
+        BeanUtils.copyProperties(profile, userProfile);
         userModel.setUserProfile(
-                userProfileService.addProfile(
-                        userModel.getId().toString(), profile
-                )
+                userProfileRepository.save(userProfile)
         );
 
         return userModel;
