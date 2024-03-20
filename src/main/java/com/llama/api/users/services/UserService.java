@@ -1,7 +1,6 @@
 package com.llama.api.users.services;
 
 import com.llama.api.exceptions.ResourceNotFound;
-import com.llama.api.users.UserUtils;
 import com.llama.api.users.dto.UserDTO;
 import com.llama.api.users.dto.UserProfileDTO;
 import com.llama.api.users.models.UserProfile;
