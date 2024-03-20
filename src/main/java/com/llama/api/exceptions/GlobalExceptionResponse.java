@@ -2,6 +2,7 @@ package com.llama.api.exceptions;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -43,6 +44,21 @@ public class GlobalExceptionResponse {
         );
 
         return new ResponseEntity<>(err, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<?> authenticationFailedResponse(AuthenticationException ex, WebRequest req) {
+        Error err = new Error(
+                ex.getMessage(),
+                Stream.of(
+                        req.getDescription(false)
+                ).collect(
+                        Collectors.toCollection(ArrayList::new)
+                ),
+                new Date()
+        );
+
+        return new ResponseEntity<>(err, HttpStatus.UNAUTHORIZED);
     }
 
     public ResponseEntity<?> methodArgNotValidResponse(MethodArgumentNotValidException ex, WebRequest req) {
