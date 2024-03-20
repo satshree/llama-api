@@ -8,13 +8,16 @@ import com.llama.api.users.models.Users;
 import com.llama.api.users.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
 
 @Service
-public class UserService {
+public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
 
@@ -34,8 +37,12 @@ public class UserService {
                 );
     }
 
-    public Users getUserByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public Users getUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository
+                .findByUsername(username)
+                .orElseThrow(
+                        () -> new UsernameNotFoundException("User does not exist")
+                );
     }
 
     public Users getUserByEmail(String email) {
@@ -76,5 +83,10 @@ public class UserService {
 
     public void deleteUser(String id) {
         userRepository.deleteById(UUID.fromString(id));
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return getUserByUsername(username);
     }
 }
