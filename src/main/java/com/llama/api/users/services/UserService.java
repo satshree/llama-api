@@ -19,6 +19,9 @@ public class UserService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    UserProfileService userProfileService;
+
     public List<Users> getAllUsers() {
         return userRepository.findAll();
     }
@@ -40,17 +43,21 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public Users addUser(UserDTO user, UserProfileDTO profile) {
+    public Users addUser(UserDTO user, UserProfileDTO profile) throws ResourceNotFound {
         Users userModel = new Users();
 
         BeanUtils.copyProperties(user, userModel);
 
-        UserProfile userProfile = new UserProfile();
-        BeanUtils.copyProperties(profile, userProfile);
+        userModel = userRepository.save(userModel);
+        
+        // SAVE PROFILE
+        userModel.setUserProfile(
+                userProfileService.addProfile(
+                        userModel.getId().toString(), profile
+                )
+        );
 
-        userModel.setUserProfile(userProfile);
-
-        return userRepository.save(userModel);
+        return userModel;
     }
 
     public Users updateUser(String id, UserDTO user) throws ResourceNotFound {
