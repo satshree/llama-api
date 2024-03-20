@@ -2,20 +2,28 @@ package com.llama.api.authentication.controllers;
 
 import com.llama.api.authentication.jwt.JwtUtils;
 import com.llama.api.authentication.requests.LoginRequest;
+import com.llama.api.authentication.requests.RegisterRequest;
 import com.llama.api.authentication.responses.JwtResponse;
+import com.llama.api.exceptions.ResourceNotFound;
+import com.llama.api.users.dto.UserDTO;
+import com.llama.api.users.dto.UserProfileDTO;
 import com.llama.api.users.models.Users;
 import com.llama.api.users.services.UserService;
 import jakarta.validation.Valid;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Date;
+import java.util.Map;
+import java.util.HashMap;
 
 @CrossOrigin(origins = "*", maxAge = 3600) // change later to only accept from frontend applications
 @RestController
@@ -33,7 +41,7 @@ public class AuthenticationController {
     @Autowired
     JwtUtils jwtUtils;
 
-    @PostMapping("/login")
+    @PostMapping("/login/")
     public ResponseEntity<?> authenticate(@Valid @RequestBody LoginRequest loginRequest) {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
@@ -54,5 +62,47 @@ public class AuthenticationController {
                                 user.getUsername()
                         )
                 );
+    }
+
+    @PostMapping("/register/")
+    public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) throws ResourceNotFound {
+        // CHECK USERNAME, make this logic better later
+        try {
+            userService.getUserByUsername(registerRequest.getUsername());
+            throw new RuntimeException("User '" + registerRequest.getUsername() + "' already exists");
+        } catch (UsernameNotFoundException e) {
+            // NO SUCH USER EXISTS, CONTINUE
+        }
+
+        // CHECK EMAIL, make this logic better later
+        try {
+            userService.getUserByEmail(registerRequest.getEmail());
+            throw new RuntimeException("User '" + registerRequest.getEmail() + "' already exists");
+        } catch (ResourceNotFound e) {
+            // NO SUCH USER EXISTS, CONTINUE
+        }
+
+        // CREATE USER PROFILE
+        UserDTO user = new UserDTO();
+        UserProfileDTO profile = new UserProfileDTO();
+
+        BeanUtils.copyProperties(registerRequest, user);
+        BeanUtils.copyProperties(registerRequest, profile);
+
+        Users userModel = userService.addUser(user, profile);
+
+        // SET PASSWORD
+        userService.setPassword(
+                userModel.getId().toString(),
+                passwordEncoder.encode(registerRequest.getPassword()
+                )
+        );
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("message", "User registered");
+        response.put("user", userModel);
+
+        return ResponseEntity.ok(response);
     }
 }

@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -47,14 +48,24 @@ public class UserService implements UserDetailsService {
                 );
     }
 
-    public Users getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public Users getUserByEmail(String email) throws ResourceNotFound {
+        return userRepository
+                .findByEmail(email)
+                .orElseThrow(
+                        () -> new ResourceNotFound("User does not exist")
+                );
     }
 
     public Users addUser(UserDTO user, UserProfileDTO profile) throws ResourceNotFound {
         Users userModel = new Users();
 
         BeanUtils.copyProperties(user, userModel);
+
+        // DEFAULT VALUES TO SET FOR CUSTOMER USERS
+        userModel.setIsSuper(false);
+        userModel.setIsStaff(false);
+
+        userModel.setDateJoined(new Date());
 
         userModel = userRepository.save(userModel);
 
@@ -65,7 +76,7 @@ public class UserService implements UserDetailsService {
                 userProfileRepository.save(userProfile)
         );
 
-        return userModel;
+        return userRepository.save(userModel);
     }
 
     public Users updateUser(String id, UserDTO user) throws ResourceNotFound {
@@ -78,7 +89,8 @@ public class UserService implements UserDetailsService {
     public void setPassword(String id, String password) throws ResourceNotFound {
         Users user = getUser(id);
 
-        user.setPassword(UserUtils.hashPassword(password));
+//        user.setPassword(UserUtils.hashPassword(password));
+        user.setPassword(password); // NO NEED TO MANUALLY HASH SINCE IT IS HANDLED BY SPRING BOOT
 
         userRepository.save(user);
     }
