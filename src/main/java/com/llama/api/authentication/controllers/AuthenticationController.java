@@ -1,10 +1,15 @@
 package com.llama.api.authentication.controllers;
 
 import com.llama.api.authentication.jwt.JwtUtils;
+import com.llama.api.authentication.models.RefreshToken;
 import com.llama.api.authentication.requests.LoginRequest;
+import com.llama.api.authentication.requests.RefreshRequest;
 import com.llama.api.authentication.requests.RegisterRequest;
 import com.llama.api.authentication.responses.JwtResponse;
+import com.llama.api.authentication.responses.TokenResponse;
+import com.llama.api.authentication.services.RefreshTokenService;
 import com.llama.api.exceptions.ResourceNotFound;
+import com.llama.api.exceptions.TokenRefreshException;
 import com.llama.api.users.dto.UserDTO;
 import com.llama.api.users.dto.UserProfileDTO;
 import com.llama.api.users.models.Users;
@@ -24,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.UUID;
 
 @CrossOrigin(origins = "*", maxAge = 3600) // change later to only accept from frontend applications
 @RestController
@@ -41,8 +47,11 @@ public class AuthenticationController {
     @Autowired
     JwtUtils jwtUtils;
 
+    @Autowired
+    RefreshTokenService refreshTokenService;
+
     @PostMapping("/login/")
-    public ResponseEntity<?> authenticate(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticate(@Valid @RequestBody LoginRequest loginRequest) throws ResourceNotFound {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         loginRequest.getUsername(), loginRequest.getPassword()
@@ -54,14 +63,44 @@ public class AuthenticationController {
 
         Users user = (Users) authentication.getPrincipal();
 
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId().toString());
+
         return ResponseEntity
                 .ok(new JwtResponse(
                                 jwt,
+                                refreshToken.getToken(),
                                 "Bearer",
                                 user.getId(),
                                 user.getUsername()
                         )
                 );
+    }
+
+    @PostMapping("/refresh/")
+    public ResponseEntity<?> refreshtoken(@Valid @RequestBody RefreshRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
+
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String token = jwtUtils.generateTokenFromUsername(user.getUsername());
+                    return ResponseEntity.ok(new TokenResponse(token, requestRefreshToken));
+                })
+                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
+                        "Refresh token is not in database!"));
+    }
+
+    @PostMapping("/signout")
+    public ResponseEntity<?> logoutUser() throws ResourceNotFound {
+        Users user = (Users) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UUID userId = user.getId();
+        refreshTokenService.deleteByUserId(userId.toString());
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Log out successful");
+
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/register/")
