@@ -1,7 +1,10 @@
 package com.llama.api.users.services;
 
+import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.users.UserUtils;
 import com.llama.api.users.dto.UserDTO;
+import com.llama.api.users.dto.UserProfileDTO;
+import com.llama.api.users.models.UserProfile;
 import com.llama.api.users.models.Users;
 import com.llama.api.users.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -20,10 +23,13 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public Users getUser(String id) {
-        return userRepository.findById(UUID.fromString(id)).orElseThrow(
-                // implement later
-        );
+    public Users getUser(String id) throws ResourceNotFound {
+        return userRepository
+                .findById(
+                        UUID.fromString(id)
+                ).orElseThrow(
+                        () -> new ResourceNotFound("User does not exist")
+                );
     }
 
     public Users getUserByUsername(String username) {
@@ -34,21 +40,27 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public Users addUser(UserDTO user) {
+    public Users addUser(UserDTO user, UserProfileDTO profile) {
         Users userModel = new Users();
 
         BeanUtils.copyProperties(user, userModel);
+
+        UserProfile userProfile = new UserProfile();
+        BeanUtils.copyProperties(profile, userProfile);
+
+        userModel.setUserProfile(userProfile);
+
         return userRepository.save(userModel);
     }
 
-    public Users updateUser(String id, UserDTO user) {
+    public Users updateUser(String id, UserDTO user) throws ResourceNotFound {
         Users userModel = getUser(id);
 
         BeanUtils.copyProperties(user, userModel);
         return userRepository.save(userModel);
     }
 
-    public void setPassword(String id, String password) {
+    public void setPassword(String id, String password) throws ResourceNotFound {
         Users user = getUser(id);
 
         user.setPassword(UserUtils.hashPassword(password));

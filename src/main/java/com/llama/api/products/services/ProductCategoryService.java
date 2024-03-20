@@ -1,5 +1,6 @@
 package com.llama.api.products.services;
 
+import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.products.models.ProductCategory;
 import com.llama.api.products.repository.ProductCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,12 @@ public class ProductCategoryService {
         return productCategoryRepository.findAll();
     }
 
-    public ProductCategory getCategory(String id) {
+    public ProductCategory getCategory(String id) throws ResourceNotFound {
         return productCategoryRepository
                 .findById(
                         UUID.fromString(id)
                 ).orElseThrow(
-                        // implement later
+                        () -> new ResourceNotFound("Category does not exist")
                 );
     }
 
@@ -34,7 +35,7 @@ public class ProductCategoryService {
         return productCategoryRepository.save(category);
     }
 
-    public ProductCategory updateCategory(String id, String name) {
+    public ProductCategory updateCategory(String id, String name) throws ResourceNotFound {
         ProductCategory category = getCategory(id);
         category.setName(name);
 

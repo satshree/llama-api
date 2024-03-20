@@ -1,6 +1,7 @@
 package com.llama.api.products.services;
 
 import com.llama.api.cloudinary.CloudinaryServiceImpl;
+import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.products.dto.ProductImageDTO;
 import com.llama.api.products.models.ProductImages;
 import com.llama.api.products.models.Products;
@@ -25,22 +26,22 @@ public class ProductImageService {
     @Autowired
     CloudinaryServiceImpl cloudinaryService;
 
-    public List<ProductImages> getAllImages(String productID) {
+    public List<ProductImages> getAllImages(String productID) throws ResourceNotFound {
         Products product = productService.getProduct(productID);
 
         return productImageRepository.findByProduct(product);
     }
 
-    public ProductImages getImage(String id) {
+    public ProductImages getImage(String id) throws ResourceNotFound {
         return productImageRepository
                 .findById(
                         UUID.fromString(id)
                 ).orElseThrow(
-                        // implement later
+                        () -> new ResourceNotFound("Image does not exist")
                 );
     }
 
-    public ProductImages addImage(String productID, MultipartFile image) throws IOException {
+    public ProductImages addImage(String productID, MultipartFile image) throws IOException, ResourceNotFound {
         // GET PRODUCT
         Products product = productService.getProduct(productID);
 
@@ -60,7 +61,7 @@ public class ProductImageService {
         return productImageRepository.save(pImage);
     }
 
-    public ProductImages updateImage(String id, ProductImageDTO image) {
+    public ProductImages updateImage(String id, ProductImageDTO image) throws ResourceNotFound {
         ProductImages pImage = getImage(id);
 
         BeanUtils.copyProperties(image, pImage);

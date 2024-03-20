@@ -1,5 +1,6 @@
 package com.llama.api.wishlist.services;
 
+import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.products.models.Products;
 import com.llama.api.products.services.ProductService;
 import com.llama.api.users.models.Users;
@@ -23,7 +24,7 @@ public class WishlistService {
     @Autowired
     ProductService productService;
 
-    public List<Wishlist> getAllWishlist(String userID) {
+    public List<Wishlist> getAllWishlist(String userID) throws ResourceNotFound {
         Users user = userService.getUser(userID);
 
         return wishlistRepository.findByUser(user);
@@ -38,7 +39,7 @@ public class WishlistService {
                 );
     }
 
-    public Wishlist addWishlist(String notes, String productID, String userID) {
+    public Wishlist addWishlist(String notes, String productID, String userID) throws ResourceNotFound {
         Products product = productService.getProduct(productID);
         Users user = userService.getUser(userID);
 

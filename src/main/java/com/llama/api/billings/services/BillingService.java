@@ -3,6 +3,7 @@ package com.llama.api.billings.services;
 import com.llama.api.billings.models.Billings;
 import com.llama.api.billings.models.Orders;
 import com.llama.api.billings.repository.BillingRepository;
+import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.users.models.Users;
 import com.llama.api.users.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,22 +24,22 @@ public class BillingService {
         return billingRepository.findAll();
     }
 
-    public List<Billings> getAllBillings(String userID) {
+    public List<Billings> getAllBillings(String userID) throws ResourceNotFound {
         Users user = userService.getUser(userID);
 
         return billingRepository.findByUser(user);
     }
 
-    public Billings getBill(String id) {
+    public Billings getBill(String id) throws ResourceNotFound {
         return billingRepository
                 .findById(
                         UUID.fromString(id)
                 ).orElseThrow(
-                        // implement later
+                        () -> new ResourceNotFound("Bill does not exist")
                 );
     }
 
-    public Billings setDiscount(String id, Double discount) {
+    public Billings setDiscount(String id, Double discount) throws ResourceNotFound {
         Billings billings = getBill(id);
 
         billings.setDiscount(discount);
@@ -46,7 +47,7 @@ public class BillingService {
         return billingRepository.save(billings);
     }
 
-    public Billings updateTotal(String id) {
+    public Billings updateTotal(String id) throws ResourceNotFound {
         Billings billings = getBill(id);
 
         for (Orders o : billings.getOrders()) {
@@ -66,7 +67,7 @@ public class BillingService {
         return billingRepository.save(billings);
     }
 
-    public Billings createBill(String userID) {
+    public Billings createBill(String userID) throws ResourceNotFound {
         Users user = userService.getUser(userID);
 
         Billings billings = new Billings();

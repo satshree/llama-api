@@ -1,5 +1,6 @@
 package com.llama.api.users.services;
 
+import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.users.dto.UserDTO;
 import com.llama.api.users.dto.UserProfileDTO;
 import com.llama.api.users.models.UserProfile;
@@ -23,7 +24,7 @@ public class UserProfileService {
     @Autowired
     UserRepository userRepository;
 
-    public UserProfile getProfile(String userID) {
+    public UserProfile getProfile(String userID) throws ResourceNotFound {
         Users user = userService.getUser(userID);
 
         return userProfileRepository
@@ -31,11 +32,11 @@ public class UserProfileService {
                         user
                                 .getUserProfile().getId()
                 ).orElseThrow(
-                        // implement later
+                        () -> new ResourceNotFound("User does not exist")
                 );
     }
 
-    public UserProfile addProfile(String userID, UserProfileDTO profile) {
+    public UserProfile addProfile(String userID, UserProfileDTO profile) throws ResourceNotFound {
         Users user = userService.getUser(userID);
 
         UserProfile userProfile = new UserProfile();
@@ -48,7 +49,7 @@ public class UserProfileService {
         return result.getUserProfile();
     }
 
-    public UserProfile updateProfile(String userID, UserProfileDTO profile) {
+    public UserProfile updateProfile(String userID, UserProfileDTO profile) throws ResourceNotFound {
         Users user = userService.getUser(userID);
 
         UserProfile userProfile = user.getUserProfile();

@@ -1,5 +1,6 @@
 package com.llama.api.products.services;
 
+import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.products.dto.ProductDTO;
 import com.llama.api.products.models.ProductCategory;
 import com.llama.api.products.models.Products;
@@ -23,12 +24,12 @@ public class ProductService {
         return productRepository.findAll();
     }
 
-    public Products getProduct(String id) {
+    public Products getProduct(String id) throws ResourceNotFound {
         return productRepository
                 .findById(
                         UUID.fromString(id)
                 ).orElseThrow(
-                        // implement later
+                        () -> new ResourceNotFound("Product does not exist")
                 );
     }
 
@@ -36,7 +37,7 @@ public class ProductService {
         return productRepository.findByName(name);
     }
 
-    public Products addProduct(ProductDTO product) {
+    public Products addProduct(ProductDTO product) throws ResourceNotFound {
         Products productModel = new Products();
 
         BeanUtils.copyProperties(product, productModel);
@@ -51,7 +52,7 @@ public class ProductService {
         );
     }
 
-    public Products updateProduct(String id, ProductDTO product) {
+    public Products updateProduct(String id, ProductDTO product) throws ResourceNotFound {
         Products productModel = getProduct(id);
 
         BeanUtils.copyProperties(product, productModel);
@@ -66,7 +67,7 @@ public class ProductService {
         );
     }
 
-    public Products setProductCategory(String productID, String categoryID) {
+    public Products setProductCategory(String productID, String categoryID) throws ResourceNotFound {
         ProductCategory category = productCategoryService.getCategory(categoryID);
         Products product = getProduct(productID);
 

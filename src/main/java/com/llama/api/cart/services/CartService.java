@@ -3,6 +3,7 @@ package com.llama.api.cart.services;
 import com.llama.api.cart.models.Cart;
 import com.llama.api.cart.models.CartItems;
 import com.llama.api.cart.repository.CartRepository;
+import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.users.models.Users;
 import com.llama.api.users.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,22 +20,22 @@ public class CartService {
     @Autowired
     UserService userService;
 
-    public Cart getCart(String userID) {
+    public Cart getCart(String userID) throws ResourceNotFound {
         Users user = userService.getUser(userID);
 
         return cartRepository.findByUser(user);
     }
 
-    public Cart getCartByID(String id) {
+    public Cart getCartByID(String id) throws ResourceNotFound {
         return cartRepository
                 .findById(
                         UUID.fromString(id)
                 ).orElseThrow(
-                        // implement later
+                        () -> new ResourceNotFound("Cart does not exist")
                 );
     }
 
-    public Cart createCart(String userID) {
+    public Cart createCart(String userID) throws ResourceNotFound {
         Users user = userService.getUser(userID);
 
         Cart cart = new Cart();
@@ -45,7 +46,7 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
-    public Cart updateCart(String id) {
+    public Cart updateCart(String id) throws ResourceNotFound {
         Cart cart = getCartByID(id);
 
         cart.setUpdated(new Date());

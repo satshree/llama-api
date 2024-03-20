@@ -3,6 +3,7 @@ package com.llama.api.billings.services;
 import com.llama.api.billings.models.Billings;
 import com.llama.api.billings.models.Orders;
 import com.llama.api.billings.repository.OrderRepository;
+import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.products.models.Products;
 import com.llama.api.products.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,22 +25,22 @@ public class OrderService {
     @Autowired
     ProductService productService;
 
-    public List<Orders> getOrders(String billID) {
+    public List<Orders> getOrders(String billID) throws ResourceNotFound {
         Billings bill = billingService.getBill(billID);
 
         return orderRepository.findByBill(bill);
     }
 
-    public Orders getOrder(String id) {
+    public Orders getOrder(String id) throws ResourceNotFound {
         return orderRepository
                 .findById(
                         UUID.fromString(id)
                 ).orElseThrow(
-                        // implement later
+                        () -> new ResourceNotFound("Order does not exist")
                 );
     }
 
-    public Orders createOrder(String productID, String billID, Integer quantity) {
+    public Orders createOrder(String productID, String billID, Integer quantity) throws ResourceNotFound {
         Products product = productService.getProduct(productID);
         Billings bill = billingService.getBill(billID);
 
@@ -59,7 +60,7 @@ public class OrderService {
         return order;
     }
 
-    public Orders updateTotal(String orderID) {
+    public Orders updateTotal(String orderID) throws ResourceNotFound {
         Orders order = getOrder(orderID);
 
         order.setTotal(
@@ -76,7 +77,7 @@ public class OrderService {
         return order;
     }
 
-    public Orders updateQuantity(String orderID, Integer quantity) {
+    public Orders updateQuantity(String orderID, Integer quantity) throws ResourceNotFound {
         Orders order = getOrder(orderID);
         order.setQuantity(quantity); // implement check for positive integer later!!
 
