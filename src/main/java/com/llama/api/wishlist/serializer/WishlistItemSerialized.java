@@ -3,8 +3,8 @@ package com.llama.api.wishlist.serializer;
 import com.llama.api.products.models.Products;
 import com.llama.api.products.serializer.ProductSerialized;
 import com.llama.api.users.models.Users;
+import com.llama.api.users.serializer.SimpleUserSerialized;
 import com.llama.api.wishlist.models.Wishlist;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,14 +13,11 @@ import lombok.NoArgsConstructor;
 public class WishlistItemSerialized {
     String id;
     String notes;
-    User user;
+    SimpleUserSerialized user;
     ProductSerialized product;
 
     public void setUser(Users userModel) {
-        user = new User(
-                userModel.getId().toString(),
-                userModel.getUsername()
-        );
+        user = SimpleUserSerialized.serialize(userModel);
     }
 
     public void setProduct(Products productModel) {
@@ -37,11 +34,4 @@ public class WishlistItemSerialized {
 
         return wishlistSerialized;
     }
-}
-
-@Data
-@AllArgsConstructor
-class User {
-    String id;
-    String username;
 }
