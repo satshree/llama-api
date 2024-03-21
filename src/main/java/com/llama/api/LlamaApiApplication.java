@@ -2,7 +2,6 @@ package com.llama.api;
 
 import com.llama.api.users.dto.UserDTO;
 import com.llama.api.users.dto.UserProfileDTO;
-import com.llama.api.users.models.Users;
 import com.llama.api.users.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
