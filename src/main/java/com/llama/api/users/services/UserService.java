@@ -5,7 +5,6 @@ import com.llama.api.users.dto.UserDTO;
 import com.llama.api.users.dto.UserProfileDTO;
 import com.llama.api.users.models.UserProfile;
 import com.llama.api.users.models.Users;
-import com.llama.api.users.repository.UserProfileRepository;
 import com.llama.api.users.repository.UserRepository;
 import com.llama.api.users.serializer.UserSerialized;
 import org.springframework.beans.BeanUtils;
@@ -24,9 +23,6 @@ import java.util.UUID;
 public class UserService implements UserDetailsService {
     @Autowired
     UserRepository userRepository;
-
-    @Autowired
-    UserProfileRepository userProfileRepository;
 
     public List<Users> getAllUsers() {
         return userRepository.findAll();
@@ -71,10 +67,11 @@ public class UserService implements UserDetailsService {
                 );
     }
 
-    public Users addUser(UserDTO user, UserProfileDTO profile) throws ResourceNotFound {
+    public Users addUser(UserDTO user, UserProfileDTO profile, String password) throws ResourceNotFound {
         Users userModel = new Users();
 
         BeanUtils.copyProperties(user, userModel);
+        userModel.setPassword(password);
 
         // DEFAULT VALUES TO SET FOR CUSTOMER USERS
         userModel.setIsSuper(false);
@@ -82,14 +79,10 @@ public class UserService implements UserDetailsService {
 
         userModel.setDateJoined(new Date());
 
-        userModel = userRepository.save(userModel);
-
         // SAVE PROFILE
         UserProfile userProfile = new UserProfile();
         BeanUtils.copyProperties(profile, userProfile);
-        userModel.setUserProfile(
-                userProfileRepository.save(userProfile)
-        );
+        userModel.setUserProfile(userProfile);
 
         return userRepository.save(userModel);
     }
@@ -106,6 +99,13 @@ public class UserService implements UserDetailsService {
 
 //        user.setPassword(UserUtils.hashPassword(password));
         user.setPassword(password); // NO NEED TO MANUALLY HASH SINCE IT IS HANDLED BY SPRING BOOT
+
+        userRepository.save(user);
+    }
+
+    public void updateLastLogin(String id) throws ResourceNotFound {
+        Users user = getUser(id);
+        user.setLastLogin(new Date());
 
         userRepository.save(user);
     }
