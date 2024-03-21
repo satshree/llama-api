@@ -1,7 +1,6 @@
 package com.llama.api.authentication.controllers;
 
 import com.llama.api.authentication.jwt.JwtUtils;
-import com.llama.api.authentication.models.RefreshToken;
 import com.llama.api.authentication.requests.LoginRequest;
 import com.llama.api.authentication.requests.RefreshRequest;
 import com.llama.api.authentication.requests.RegisterRequest;
@@ -63,12 +62,12 @@ public class AuthenticationController {
 
         Users user = (Users) authentication.getPrincipal();
 
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user.getId().toString());
+        String refreshToken = refreshTokenService.createRefreshToken(user.getId().toString());
 
         return ResponseEntity
                 .ok(new JwtResponse(
                                 jwt,
-                                refreshToken.getToken(),
+                                refreshToken,
                                 "Bearer",
                                 user.getId(),
                                 user.getUsername()
@@ -77,31 +76,34 @@ public class AuthenticationController {
     }
 
     @PostMapping("/refresh/")
-    public ResponseEntity<?> refreshtoken(@Valid @RequestBody RefreshRequest request) {
+    public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshRequest request) {
+        System.out.println("HELLO " + request.getRefreshToken());
         String requestRefreshToken = request.getRefreshToken();
 
-        return refreshTokenService.findByToken(requestRefreshToken)
-                .map(refreshTokenService::verifyExpiration)
-                .map(RefreshToken::getUser)
-                .map(user -> {
-                    String token = jwtUtils.generateTokenFromUsername(user.getUsername());
-                    return ResponseEntity.ok(new TokenResponse(token, requestRefreshToken));
-                })
-                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
-                        "Refresh token is not in database!"));
+        if (requestRefreshToken != null && jwtUtils.validateJwtToken(requestRefreshToken)) {
+            // REFRESH TOKEN IS VERIFIED
+
+            String username = jwtUtils.getUserNameFromJwtToken(requestRefreshToken);
+            String newAccessToken = jwtUtils.generateTokenFromUsername(username);
+
+            return ResponseEntity.ok(new TokenResponse(newAccessToken, requestRefreshToken));
+        }
+
+
+        throw new TokenRefreshException(requestRefreshToken, "Cannot verify refresh token");
     }
 
-    @PostMapping("/signout")
-    public ResponseEntity<?> logoutUser() throws ResourceNotFound {
-        Users user = (Users) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        UUID userId = user.getId();
-        refreshTokenService.deleteByUserId(userId.toString());
-
-        Map<String, String> response = new HashMap<>();
-        response.put("message", "Log out successful");
-
-        return ResponseEntity.ok(response);
-    }
+//    @PostMapping("/signout")
+//    public ResponseEntity<?> logoutUser() throws ResourceNotFound {
+//        Users user = (Users) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+//        UUID userId = user.getId();
+//        refreshTokenService.deleteByUserId(userId.toString());
+//
+//        Map<String, String> response = new HashMap<>();
+//        response.put("message", "Log out successful");
+//
+//        return ResponseEntity.ok(response);
+//    }
 
     @PostMapping("/register/")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) throws ResourceNotFound {

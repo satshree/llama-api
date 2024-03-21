@@ -14,26 +14,53 @@ import java.util.Date;
 @Component
 public class JwtUtils {
     @Value("${llama.app.jwtSecret}")
-    private String jwtSecret;
+    String jwtSecret;
 
     @Value("${llama.app.jwtExpirationMs}")
-    private int jwtExpirationMs;
+    Integer jwtExpirationMs;
+
+    @Value("${llama.app.jwtRefreshExpirationMs}")
+    Integer jwtRefreshExpirationMs;
 
     public String generateJwtToken(Authentication authentication) {
 
         Users userPrincipal = (Users) authentication.getPrincipal();
 
-        return Jwts.builder()
+        Date issuedAt = new Date();
+        Date expiration = Date.from(new Date().toInstant().plusMillis(jwtExpirationMs));
+
+
+        String token = Jwts.builder()
                 .setSubject((userPrincipal.getUsername()))
-                .setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
-                .signWith(key(), SignatureAlgorithm.HS256)
+                .setIssuedAt(issuedAt)
+                .setExpiration(expiration)
+                .signWith(SignatureAlgorithm.HS256, key())
                 .compact();
+
+        return token;
     }
 
     public String generateTokenFromUsername(String username) {
-        return Jwts.builder().setSubject(username).setIssuedAt(new Date())
-                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs)).signWith(SignatureAlgorithm.HS512, jwtSecret)
+        Date issuedAt = new Date();
+        Date expiration = Date.from(new Date().toInstant().plusMillis(jwtExpirationMs));
+
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(issuedAt)
+                .setExpiration(expiration)
+                .signWith(SignatureAlgorithm.HS256, key())
+                .compact();
+    }
+
+    public String generateRefreshTokenFromUsername(String username) {
+        Date issuedAt = new Date();
+        Date expiration = Date.from(new Date().toInstant().plusMillis(jwtRefreshExpirationMs));
+
+        return Jwts.builder()
+                .setSubject(username)
+                .setIssuedAt(issuedAt)
+                .setExpiration(expiration)
+                .signWith(SignatureAlgorithm.HS256, key())
                 .compact();
     }
 
@@ -42,22 +69,33 @@ public class JwtUtils {
     }
 
     public String getUserNameFromJwtToken(String token) {
-        return Jwts.parser().setSigningKey(key()).build()
-                .parseClaimsJws(token).getBody().getSubject();
+        return Jwts.parser()
+                .setSigningKey(key())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
     }
 
     public boolean validateJwtToken(String authToken) {
         try {
-            Jwts.parser().setSigningKey(key()).build().parse(authToken);
+            Jwts.parser()
+                    .setSigningKey(key())
+                    .build()
+                    .parse(authToken);
             return true;
         } catch (MalformedJwtException e) {
             System.out.println("Invalid JWT token: " + e.getMessage());
+//            throw new MalformedJwtException("Invalid JWT token: " + e.getMessage());
         } catch (ExpiredJwtException e) {
             System.out.println("JWT token is expired: " + e.getMessage());
+//            throw new ExpiredJwtException(e.getHeader(), e.getClaims(), e.getMessage());
         } catch (UnsupportedJwtException e) {
             System.out.println("JWT token is unsupported: " + e.getMessage());
+//            throw new UnsupportedJwtException("JWT token is unsupported: " + e.getMessage());
         } catch (IllegalArgumentException e) {
             System.out.println("JWT claims string is empty: " + e.getMessage());
+//            throw new IllegalArgumentException("JWT claims string is empty: " + e.getMessage());
         }
 
         return false;
