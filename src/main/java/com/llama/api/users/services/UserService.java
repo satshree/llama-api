@@ -15,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -29,6 +30,16 @@ public class UserService implements UserDetailsService {
 
     public List<Users> getAllUsers() {
         return userRepository.findAll();
+    }
+
+    public List<UserSerialized> getAllUserSerialized() {
+        List<UserSerialized> userSerializedList = new ArrayList<>();
+
+        for (Users u : getAllUsers()) {
+            userSerializedList.add(UserSerialized.serialize(u));
+        }
+
+        return userSerializedList;
     }
 
     public Users getUser(String id) throws ResourceNotFound {
