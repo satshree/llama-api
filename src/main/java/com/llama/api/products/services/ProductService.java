@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductService {
@@ -22,9 +23,42 @@ public class ProductService {
     @Autowired
     ProductCategoryService productCategoryService;
 
+
+    /**
+     * Returns all products
+     */
     public List<Products> getAllProducts() {
         return productRepository.findAll();
     }
+
+    /**
+     * @param id
+     * @return Products
+     * @throws ResourceNotFound
+     */
+    public Products getProduct(String id) throws ResourceNotFound {
+        return productRepository
+                .findById(
+                        UUID.fromString(id)
+                ).orElseThrow(
+                        () -> new ResourceNotFound("Product does not exist")
+                );
+    }
+
+    public List<Products> getProductByName(String name) {
+        return getAllProducts()
+                .stream()
+                .filter(product ->
+                        product.getName()
+                                .toLowerCase()
+                                .contains(name.toLowerCase()
+                                )
+                ).collect(Collectors.toList());
+    }
+
+    /*
+     * GET SERIALIZED PRODUCT SERVICES
+     */
 
     public List<ProductSerialized> getAllProductSerialized() {
         List<ProductSerialized> productSerializedList = new ArrayList<>();
@@ -36,26 +70,28 @@ public class ProductService {
         return productSerializedList;
     }
 
-    public Products getProduct(String id) throws ResourceNotFound {
-        return productRepository
-                .findById(
-                        UUID.fromString(id)
-                ).orElseThrow(
-                        () -> new ResourceNotFound("Product does not exist")
-                );
-    }
-
     public ProductSerialized getProductSerialized(String id) throws ResourceNotFound {
         return ProductSerialized.serialize(getProduct(id));
     }
 
-    public Products getProductByName(String name) {
-        return productRepository.findByName(name);
+    public List<ProductSerialized> getProductByNameSerialized(String name) {
+        List<Products> allProducts = getProductByName(name);
+        List<ProductSerialized> allProductSerialized = new ArrayList<>();
+
+        for (Products p : allProducts) {
+            allProductSerialized.add(ProductSerialized.serialize(p));
+        }
+
+        return allProductSerialized;
     }
 
-    public ProductSerialized getProductByNameSerialized(String name) {
-        return ProductSerialized.serialize(getProductByName(name));
+    public ProductSerialized getProductBySku(String sku) {
+        return ProductSerialized.serialize(productRepository.findBySku(sku));
     }
+
+    /*
+     * CRUD OPERATIONS
+     */
 
     public Products addProduct(ProductDTO product) throws ResourceNotFound {
         Products productModel = new Products();
