@@ -2,6 +2,7 @@ package com.llama.api.users.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.llama.api.billings.models.Billings;
+import com.llama.api.cart.models.Cart;
 import com.llama.api.wishlist.models.Wishlist;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -55,8 +56,13 @@ public class Users implements UserDetails {
     @JsonProperty("date_joined")
     Date dateJoined;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "profile_id", referencedColumnName = "profile_id")
     UserProfile userProfile;
+
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "cart_id", referencedColumnName = "cart_id")
+    Cart cart;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Wishlist> wishlists;

@@ -1,6 +1,6 @@
 package com.llama.api.cart.models;
 
-import com.llama.api.users.models.UserProfile;
+import com.llama.api.users.models.Users;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -25,9 +25,9 @@ public class Cart {
     @Column
     Date updated;
 
-    @OneToOne(mappedBy = "cart", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    UserProfile user;
+    @OneToOne(fetch = FetchType.LAZY)
+    Users user;
 
-    @OneToMany(mappedBy = "cart")
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
     List<CartItems> cartItems;
 }

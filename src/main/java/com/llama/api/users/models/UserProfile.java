@@ -22,12 +22,4 @@ public class UserProfile {
 
     @Column
     String phone;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    Users user;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id")
-    Cart cart;
 }
