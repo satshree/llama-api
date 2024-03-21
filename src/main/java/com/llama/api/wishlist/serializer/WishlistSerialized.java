@@ -2,6 +2,7 @@ package com.llama.api.wishlist.serializer;
 
 import com.llama.api.products.models.Products;
 import com.llama.api.users.models.Users;
+import com.llama.api.wishlist.models.Wishlist;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +28,17 @@ public class WishlistSerialized {
                 productModel.getName(),
                 productModel.getSku()
         );
+    }
+
+    public static WishlistSerialized serialize(Wishlist wishlist) {
+        WishlistSerialized wishlistSerialized = new WishlistSerialized();
+
+        wishlistSerialized.setId(wishlist.getId().toString());
+        wishlistSerialized.setNotes(wishlist.getNotes());
+        wishlistSerialized.setUser(wishlist.getUser());
+        wishlistSerialized.setProduct(wishlist.getProduct());
+
+        return wishlistSerialized;
     }
 }
 

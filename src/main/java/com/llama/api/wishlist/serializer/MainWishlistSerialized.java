@@ -15,13 +15,7 @@ public class MainWishlistSerialized {
         MainWishlistSerialized wishlistSerialized = new MainWishlistSerialized();
 
         for (Wishlist w : wishlists) {
-            WishlistSerialized wishlistItemSerialized = new WishlistSerialized();
-            wishlistItemSerialized.setId(w.getId().toString());
-            wishlistItemSerialized.setNotes(w.getNotes());
-            wishlistItemSerialized.setUser(w.getUser());
-            wishlistItemSerialized.setProduct(w.getProduct());
-
-            wishlistSerialized.wishlists.add(wishlistItemSerialized);
+            wishlistSerialized.wishlists.add(WishlistSerialized.serialize(w));
         }
 
         return wishlistSerialized.wishlists;
