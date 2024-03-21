@@ -1,7 +1,6 @@
 package com.llama.api.products.serializer;
 
 import com.llama.api.products.models.ProductImages;
-import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
