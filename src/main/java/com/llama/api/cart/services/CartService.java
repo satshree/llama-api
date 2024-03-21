@@ -3,6 +3,7 @@ package com.llama.api.cart.services;
 import com.llama.api.cart.models.Cart;
 import com.llama.api.cart.models.CartItems;
 import com.llama.api.cart.repository.CartRepository;
+import com.llama.api.cart.serializer.CartSerialized;
 import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.users.models.Users;
 import com.llama.api.users.services.UserService;
@@ -26,6 +27,10 @@ public class CartService {
         return cartRepository.findByUser(user);
     }
 
+    public CartSerialized getCartSerialized(String userID) throws ResourceNotFound {
+        return CartSerialized.serialize(getCart(userID));
+    }
+
     public Cart getCartByID(String id) throws ResourceNotFound {
         return cartRepository
                 .findById(
@@ -33,6 +38,10 @@ public class CartService {
                 ).orElseThrow(
                         () -> new ResourceNotFound("Cart does not exist")
                 );
+    }
+
+    public CartSerialized getCardByIDSerialized(String id) throws ResourceNotFound {
+        return CartSerialized.serialize(getCartByID(id));
     }
 
     public Cart createCart(String userID) throws ResourceNotFound {
