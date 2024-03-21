@@ -1,13 +1,10 @@
 package com.llama.api.users.serializer;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.llama.api.users.models.UserProfile;
+import com.llama.api.Utils;
 import com.llama.api.users.models.Users;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -15,11 +12,9 @@ import java.util.Date;
 public class UserSerialized {
     String id;
 
-    @JsonProperty("first_name")
-    String firstName;
+    String first_name;
 
-    @JsonProperty("last_name")
-    String lastName;
+    String last_name;
 
     String username;
 
@@ -29,11 +24,9 @@ public class UserSerialized {
 
     String phone;
 
-    @JsonProperty("last_login")
-    Date lastLogin;
+    String last_login;
 
-    @JsonProperty("date_joined")
-    Date dateJoined;
+    String date_joined;
 
     public static UserSerialized serialize(Users user) {
         return new UserSerialized(
@@ -44,8 +37,8 @@ public class UserSerialized {
                 user.getEmail(),
                 user.getUserProfile().getAddress(),
                 user.getUserProfile().getPhone(),
-                user.getLastLogin(),
-                user.getDateJoined()
+                Utils.parseDate(user.getLastLogin()),
+                Utils.parseDate(user.getDateJoined())
         );
     }
 }
