@@ -6,6 +6,7 @@ import com.llama.api.products.dto.ProductImageDTO;
 import com.llama.api.products.models.ProductImages;
 import com.llama.api.products.models.Products;
 import com.llama.api.products.repository.ProductImageRepository;
+import com.llama.api.products.serializer.ProductImagesSerialized;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,10 @@ public class ProductImageService {
         return productImageRepository.findByProduct(product);
     }
 
+    public List<ProductImagesSerialized> getAllImageSerialized(String productID) throws ResourceNotFound {
+        return ProductImagesSerialized.serialize(getAllImages(productID));
+    }
+
     public ProductImages getImage(String id) throws ResourceNotFound {
         return productImageRepository
                 .findById(
@@ -39,6 +44,10 @@ public class ProductImageService {
                 ).orElseThrow(
                         () -> new ResourceNotFound("Image does not exist")
                 );
+    }
+
+    public ProductImagesSerialized getImageSerialized(String id) throws ResourceNotFound {
+        return ProductImagesSerialized.serialize(getImage(id));
     }
 
     public ProductImages addImage(String productID, MultipartFile image) throws IOException, ResourceNotFound {

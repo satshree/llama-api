@@ -5,10 +5,12 @@ import com.llama.api.products.dto.ProductDTO;
 import com.llama.api.products.models.ProductCategory;
 import com.llama.api.products.models.Products;
 import com.llama.api.products.repository.ProductRepository;
+import com.llama.api.products.serializer.ProductSerialized;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,6 +26,16 @@ public class ProductService {
         return productRepository.findAll();
     }
 
+    public List<ProductSerialized> getAllProductSerialized() {
+        List<ProductSerialized> productSerializedList = new ArrayList<>();
+
+        for (Products p : getAllProducts()) {
+            productSerializedList.add(ProductSerialized.serialize(p));
+        }
+
+        return productSerializedList;
+    }
+
     public Products getProduct(String id) throws ResourceNotFound {
         return productRepository
                 .findById(
@@ -33,8 +45,16 @@ public class ProductService {
                 );
     }
 
+    public ProductSerialized getProductSerialized(String id) throws ResourceNotFound {
+        return ProductSerialized.serialize(getProduct(id));
+    }
+
     public Products getProductByName(String name) {
         return productRepository.findByName(name);
+    }
+
+    public ProductSerialized getProductByNameSerialized(String name) {
+        return ProductSerialized.serialize(getProductByName(name));
     }
 
     public Products addProduct(ProductDTO product) throws ResourceNotFound {
