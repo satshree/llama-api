@@ -41,13 +41,7 @@ public class UserService implements UserDetailsService {
     }
 
     public UserSerialized getUserSerialized(String id) throws ResourceNotFound {
-        Users user = getUser(id);
-
-        UserSerialized userSerialized = new UserSerialized();
-        BeanUtils.copyProperties(user, userSerialized);
-        BeanUtils.copyProperties(user.getUserProfile(), userSerialized);
-
-        return userSerialized;
+        return UserSerialized.serialize(getUser(id));
     }
 
     public Users getUserByUsername(String username) throws UsernameNotFoundException {

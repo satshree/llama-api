@@ -77,7 +77,6 @@ public class AuthenticationController {
 
     @PostMapping("/refresh/")
     public ResponseEntity<?> refreshToken(@Valid @RequestBody RefreshRequest request) {
-        System.out.println("HELLO " + request.getRefreshToken());
         String requestRefreshToken = request.getRefreshToken();
 
         if (requestRefreshToken != null && jwtUtils.validateJwtToken(requestRefreshToken)) {
