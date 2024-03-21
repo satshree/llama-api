@@ -21,14 +21,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.UUID;
 
 @CrossOrigin(origins = "*", maxAge = 3600) // change later to only accept from frontend applications
 @RestController
@@ -64,6 +61,8 @@ public class AuthenticationController {
 
         String refreshToken = refreshTokenService.createRefreshToken(user.getId().toString());
 
+        userService.updateLastLogin(user.getId().toString());
+
         return ResponseEntity
                 .ok(new JwtResponse(
                                 jwt,
@@ -92,34 +91,24 @@ public class AuthenticationController {
         throw new TokenRefreshException(requestRefreshToken, "Cannot verify refresh token");
     }
 
-//    @PostMapping("/signout")
-//    public ResponseEntity<?> logoutUser() throws ResourceNotFound {
-//        Users user = (Users) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-//        UUID userId = user.getId();
-//        refreshTokenService.deleteByUserId(userId.toString());
-//
-//        Map<String, String> response = new HashMap<>();
-//        response.put("message", "Log out successful");
-//
-//        return ResponseEntity.ok(response);
-//    }
-
     @PostMapping("/register/")
     public ResponseEntity<?> register(@Valid @RequestBody RegisterRequest registerRequest) throws ResourceNotFound {
-        // CHECK USERNAME, make this logic better later
-        try {
-            userService.getUserByUsername(registerRequest.getUsername());
+        // CHECK USERNAME
+        if (userService
+                .usernameExists(
+                        registerRequest.getUsername()
+                )
+        ) {
             throw new RuntimeException("User '" + registerRequest.getUsername() + "' already exists");
-        } catch (UsernameNotFoundException e) {
-            // NO SUCH USER EXISTS, CONTINUE
         }
 
-        // CHECK EMAIL, make this logic better later
-        try {
-            userService.getUserByEmail(registerRequest.getEmail());
+        // CHECK EMAIL
+        if (userService
+                .emailExists(
+                        registerRequest.getEmail()
+                )
+        ) {
             throw new RuntimeException("User '" + registerRequest.getEmail() + "' already exists");
-        } catch (ResourceNotFound e) {
-            // NO SUCH USER EXISTS, CONTINUE
         }
 
         // CREATE USER PROFILE
@@ -129,12 +118,11 @@ public class AuthenticationController {
         BeanUtils.copyProperties(registerRequest, user);
         BeanUtils.copyProperties(registerRequest, profile);
 
-        Users userModel = userService.addUser(user, profile);
-
-        // SET PASSWORD
-        userService.setPassword(
-                userModel.getId().toString(),
-                passwordEncoder.encode(registerRequest.getPassword()
+        Users userModel = userService.addUser(
+                user,
+                profile,
+                passwordEncoder.encode(
+                        registerRequest.getPassword()
                 )
         );
 

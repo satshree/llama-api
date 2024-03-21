@@ -67,6 +67,26 @@ public class UserService implements UserDetailsService {
                 );
     }
 
+    public Boolean usernameExists(String username) {
+        try {
+            getUserByUsername(username);
+        } catch (UsernameNotFoundException e) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public Boolean emailExists(String email) {
+        try {
+            getUserByEmail(email);
+        } catch (ResourceNotFound e) {
+            return false;
+        }
+
+        return true;
+    }
+
     public Users addUser(UserDTO user, UserProfileDTO profile, String password) throws ResourceNotFound {
         Users userModel = new Users();
 
