@@ -87,8 +87,12 @@ public class OrderService {
     }
 
     public Orders updateQuantity(String orderID, Integer quantity) throws ResourceNotFound {
+        if (quantity < 0) {
+            throw new RuntimeException("Quantity cannot be negative");
+        }
+
         Orders order = getOrder(orderID);
-        order.setQuantity(quantity); // implement check for positive integer later!!
+        order.setQuantity(quantity);
 
         orderRepository.save(order);
 
