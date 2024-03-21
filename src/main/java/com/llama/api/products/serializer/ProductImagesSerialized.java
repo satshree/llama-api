@@ -1,6 +1,7 @@
 package com.llama.api.products.serializer;
 
 import com.llama.api.products.models.ProductImages;
+import jakarta.validation.constraints.Null;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,7 @@ public class ProductImagesSerialized {
 
         return productImagesSerializedList;
     }
-    
+
     public static ProductImagesSerialized serialize(ProductImages image) {
         return new ProductImagesSerialized(
                 image.getId().toString(),
