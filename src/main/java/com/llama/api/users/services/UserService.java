@@ -1,6 +1,7 @@
 package com.llama.api.users.services;
 
 import com.llama.api.exceptions.ResourceNotFound;
+import com.llama.api.users.UserUtils;
 import com.llama.api.users.dto.UserDTO;
 import com.llama.api.users.dto.UserProfileDTO;
 import com.llama.api.users.models.UserProfile;
@@ -87,15 +88,35 @@ public class UserService implements UserDetailsService {
         return true;
     }
 
-    public Users addUser(UserDTO user, UserProfileDTO profile, String password) throws ResourceNotFound {
+    public Users addUser(UserDTO user, UserProfileDTO profile, String password) {
         Users userModel = new Users();
 
         BeanUtils.copyProperties(user, userModel);
-        userModel.setPassword(password);
+        userModel = setPassword(userModel, password);
 
         // DEFAULT VALUES TO SET FOR CUSTOMER USERS
         userModel.setIsSuper(false);
         userModel.setIsStaff(false);
+
+        userModel.setDateJoined(new Date());
+
+        // SAVE PROFILE
+        UserProfile userProfile = new UserProfile();
+        BeanUtils.copyProperties(profile, userProfile);
+        userModel.setUserProfile(userProfile);
+
+        return userRepository.save(userModel);
+    }
+
+    public Users addSuperUser(UserDTO user, UserProfileDTO profile, String password) {
+        Users userModel = new Users();
+
+        BeanUtils.copyProperties(user, userModel);
+        userModel = setPassword(userModel, password);
+
+        // DEFAULT VALUES TO SET FOR SUPER USERS
+        userModel.setIsSuper(true);
+        userModel.setIsStaff(true);
 
         userModel.setDateJoined(new Date());
 
@@ -117,10 +138,15 @@ public class UserService implements UserDetailsService {
     public void setPassword(String id, String password) throws ResourceNotFound {
         Users user = getUser(id);
 
-//        user.setPassword(UserUtils.hashPassword(password));
-        user.setPassword(password); // NO NEED TO MANUALLY HASH SINCE IT IS HANDLED BY SPRING BOOT
+        user.setPassword(password);
 
         userRepository.save(user);
+    }
+
+    public Users setPassword(Users user, String password) {
+        UserUtils utils = new UserUtils();
+        user.setPassword(password);
+        return user;
     }
 
     public void updateLastLogin(String id) throws ResourceNotFound {
