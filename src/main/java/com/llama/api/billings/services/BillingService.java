@@ -3,12 +3,14 @@ package com.llama.api.billings.services;
 import com.llama.api.billings.models.Billings;
 import com.llama.api.billings.models.Orders;
 import com.llama.api.billings.repository.BillingRepository;
+import com.llama.api.billings.serializer.BillingSerialized;
 import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.users.models.Users;
 import com.llama.api.users.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +32,26 @@ public class BillingService {
         return billingRepository.findByUser(user);
     }
 
+    public List<BillingSerialized> getAllBillingSerialized() {
+        List<BillingSerialized> billingSerializedList = new ArrayList<>();
+
+        for (Billings b : getAllBillings()) {
+            billingSerializedList.add(BillingSerialized.serialize(b));
+        }
+
+        return billingSerializedList;
+    }
+
+    public List<BillingSerialized> getAllBillingSerialized(String userID) throws ResourceNotFound {
+        List<BillingSerialized> billingSerializedList = new ArrayList<>();
+
+        for (Billings b : getAllBillings(userID)) {
+            billingSerializedList.add(BillingSerialized.serialize(b));
+        }
+
+        return billingSerializedList;
+    }
+
     public Billings getBill(String id) throws ResourceNotFound {
         return billingRepository
                 .findById(
@@ -37,6 +59,10 @@ public class BillingService {
                 ).orElseThrow(
                         () -> new ResourceNotFound("Bill does not exist")
                 );
+    }
+
+    public BillingSerialized getBillSerialized(String id) throws ResourceNotFound {
+        return BillingSerialized.serialize(getBill(id));
     }
 
     public Billings setDiscount(String id, Double discount) throws ResourceNotFound {

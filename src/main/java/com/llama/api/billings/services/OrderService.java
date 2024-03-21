@@ -3,6 +3,7 @@ package com.llama.api.billings.services;
 import com.llama.api.billings.models.Billings;
 import com.llama.api.billings.models.Orders;
 import com.llama.api.billings.repository.OrderRepository;
+import com.llama.api.billings.serializer.OrderSerialized;
 import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.products.models.Products;
 import com.llama.api.products.services.ProductService;
@@ -31,6 +32,10 @@ public class OrderService {
         return orderRepository.findByBill(bill);
     }
 
+    public List<OrderSerialized> getOrdersSerialized(String billID) throws ResourceNotFound {
+        return OrderSerialized.serialize(getOrders(billID));
+    }
+
     public Orders getOrder(String id) throws ResourceNotFound {
         return orderRepository
                 .findById(
@@ -38,6 +43,10 @@ public class OrderService {
                 ).orElseThrow(
                         () -> new ResourceNotFound("Order does not exist")
                 );
+    }
+
+    public OrderSerialized getOrderSerialized(String id) throws ResourceNotFound {
+        return OrderSerialized.serialize(getOrder(id));
     }
 
     public Orders createOrder(String productID, String billID, Integer quantity) throws ResourceNotFound {
