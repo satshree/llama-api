@@ -38,10 +38,10 @@ public class AuthenticationController {
     UserService userService;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    JwtUtils jwtUtils;
 
     @Autowired
-    JwtUtils jwtUtils;
+    PasswordEncoder passwordEncoder;
 
     @Autowired
     RefreshTokenService refreshTokenService;
@@ -121,9 +121,7 @@ public class AuthenticationController {
         Users userModel = userService.addUser(
                 user,
                 profile,
-                passwordEncoder.encode(
-                        registerRequest.getPassword()
-                )
+                passwordEncoder.encode(registerRequest.getPassword())
         );
 
         Map<String, Object> response = new HashMap<>();
