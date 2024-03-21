@@ -48,7 +48,7 @@ public class CartService {
         Users user = userService.getUser(userID);
 
         Cart cart = new Cart();
-        cart.setUser(user.getUserProfile());
+        cart.setUser(user);
         cart.setUpdated(new Date());
         cart.setTotal(0.0d);
 

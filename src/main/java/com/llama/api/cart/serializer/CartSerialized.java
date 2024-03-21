@@ -24,7 +24,7 @@ public class CartSerialized {
                 cart.getId().toString(),
                 Utils.parseDate(cart.getUpdated()),
                 cart.getTotal(),
-                SimpleUserSerialized.serialize(cart.getUser().getUser()),
+                SimpleUserSerialized.serialize(cart.getUser()),
                 CartItemSerialized.serialize(cart.getCartItems())
         );
     }
