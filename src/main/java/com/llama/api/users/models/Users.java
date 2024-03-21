@@ -48,8 +48,8 @@ public class Users implements UserDetails {
     Boolean isStaff;
 
     @Column
-    @JsonProperty("last_login")
-    Date lastLogin;
+    @JsonProperty(value = "last_login")
+    Date lastLogin = null;
 
     @Column
     @JsonProperty("date_joined")
