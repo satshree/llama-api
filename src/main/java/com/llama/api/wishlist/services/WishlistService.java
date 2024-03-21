@@ -7,8 +7,8 @@ import com.llama.api.users.models.Users;
 import com.llama.api.users.services.UserService;
 import com.llama.api.wishlist.models.Wishlist;
 import com.llama.api.wishlist.repository.WishlistRepository;
-import com.llama.api.wishlist.serializer.MainWishlistSerialized;
 import com.llama.api.wishlist.serializer.WishlistSerialized;
+import com.llama.api.wishlist.serializer.WishlistItemSerialized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,9 +32,9 @@ public class WishlistService {
         return wishlistRepository.findByUser(user);
     }
 
-    public List<WishlistSerialized> getAllWishlistSerialized(String userID) throws ResourceNotFound {
+    public List<WishlistItemSerialized> getAllWishlistSerialized(String userID) throws ResourceNotFound {
         List<Wishlist> wishlists = getAllWishlist(userID);
-        return MainWishlistSerialized.serialize(wishlists);
+        return WishlistSerialized.serialize(wishlists);
     }
 
     public Wishlist getWishlist(String id) throws ResourceNotFound {
@@ -46,9 +46,9 @@ public class WishlistService {
                 );
     }
 
-    public WishlistSerialized getWishlistSerialized(String id) throws ResourceNotFound {
+    public WishlistItemSerialized getWishlistSerialized(String id) throws ResourceNotFound {
         Wishlist wishlist = getWishlist(id);
-        return WishlistSerialized.serialize(wishlist);
+        return WishlistItemSerialized.serialize(wishlist);
     }
 
     public Wishlist addWishlist(String notes, String productID, String userID) throws ResourceNotFound {
