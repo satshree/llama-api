@@ -19,7 +19,7 @@ public class Utils {
 
         urls.add("/api/management/product");
         urls.add("/api/management/product-category");
-
+        urls.add("/api/management/user");
         // add more urls as project progresses
 
         return urls;
