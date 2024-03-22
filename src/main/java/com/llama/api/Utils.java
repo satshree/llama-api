@@ -17,8 +17,8 @@ public class Utils {
     public static List<String> getAdminURLs() {
         List<String> urls = new ArrayList<>();
 
-        urls.add("/api/product");
-        urls.add("/api/product-category");
+        urls.add("/api/management/product");
+        urls.add("/api/management/product-category");
 
         // add more urls as project progresses
 
