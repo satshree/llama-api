@@ -24,6 +24,8 @@ public class UserSerialized {
 
     String phone;
 
+    Boolean is_super;
+
     String last_login;
 
     String date_joined;
@@ -37,6 +39,7 @@ public class UserSerialized {
                 user.getEmail(),
                 user.getUserProfile().getAddress(),
                 user.getUserProfile().getPhone(),
+                user.getIsSuper(),
                 Utils.parseDate(user.getLastLogin()),
                 Utils.parseDate(user.getDateJoined())
         );

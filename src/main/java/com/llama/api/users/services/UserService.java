@@ -135,6 +135,30 @@ public class UserService implements UserDetailsService {
         return userRepository.save(userModel);
     }
 
+    public Users updateUser(String id, UserDTO user, UserProfileDTO profile) throws ResourceNotFound {
+        Users userModel = getUser(id);
+        UserProfile userProfile = userModel.getUserProfile();
+
+        BeanUtils.copyProperties(user, userModel);
+        BeanUtils.copyProperties(profile, userProfile);
+
+        return userRepository.save(userModel);
+    }
+
+    public Users updateUser(Users userModel, UserDTO user) {
+        BeanUtils.copyProperties(user, userModel);
+        return userRepository.save(userModel);
+    }
+
+    public Users updateUser(Users userModel, UserDTO user, UserProfileDTO profile) {
+        UserProfile userProfile = userModel.getUserProfile();
+
+        BeanUtils.copyProperties(user, userModel);
+        BeanUtils.copyProperties(profile, userProfile);
+
+        return userRepository.save(userModel);
+    }
+
     public void setPassword(String id, String password) throws ResourceNotFound {
         Users user = getUser(id);
 
