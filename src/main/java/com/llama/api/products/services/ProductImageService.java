@@ -66,7 +66,7 @@ public class ProductImageService {
         pImage = productImageRepository.save(pImage);
 
         // UPLOAD IMAGE
-        Map uploadedImage = cloudinaryService.uploadImage(image, pImage.getId().toString());
+        Map uploadedImage = cloudinaryService.uploadImage(image, pImage.getId().toString(), productID);
         pImage.setImage(uploadedImage.get("url").toString());
         pImage.setExt(uploadedImage.get("format").toString());
 

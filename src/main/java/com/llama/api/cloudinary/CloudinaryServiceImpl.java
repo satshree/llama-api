@@ -16,10 +16,10 @@ public class CloudinaryServiceImpl {
     @Autowired
     Cloudinary cloudinary;
 
-    public Map uploadImage(MultipartFile file, String productImageID) throws IOException {
+    public Map uploadImage(MultipartFile file, String productImageID, String productID) throws IOException {
         // DEFINE FOLDER
         HashMap<Object, Object> options = new HashMap<>();
-        options.put("folder", "llama/images/[" + productImageID + "]");
+        options.put("folder", "llama/images/[" + productID + "]/[" + productImageID + "]");
 
         return cloudinary.uploader().upload(file.getBytes(), options);
     }
