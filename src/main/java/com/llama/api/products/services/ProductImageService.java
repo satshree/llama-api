@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -57,14 +58,17 @@ public class ProductImageService {
         // PRODUCT IMAGE OBJECT
         ProductImages pImage = new ProductImages();
         pImage.setProduct(product);
-        pImage.setIname(image.getName());
+        pImage.setIname(image.getOriginalFilename());
         pImage.setSize((int) image.getSize());
+
         pImage.setName(pImage.getIname().split("\\.")[0]);
-        pImage.setExt(pImage.getIname().split("\\.")[1]);
+
+        pImage = productImageRepository.save(pImage);
 
         // UPLOAD IMAGE
-        String imageURL = cloudinaryService.uploadImage(image, pImage.getId().toString());
-        pImage.setImage(imageURL);
+        Map uploadedImage = cloudinaryService.uploadImage(image, pImage.getId().toString());
+        pImage.setImage(uploadedImage.get("url").toString());
+        pImage.setExt(uploadedImage.get("format").toString());
 
         // SAVE IMAGE TO DATABASE
         return productImageRepository.save(pImage);
