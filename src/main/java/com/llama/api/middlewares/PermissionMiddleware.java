@@ -34,7 +34,11 @@ public class PermissionMiddleware implements HandlerInterceptor {
                             jwtUtils.getUserNameFromJwtToken(jwtToken)
                     );
 
-                    return user.getIsSuper(); // ONLY ALLOW SUPER USER
+                    if (!user.getIsSuper()) {
+                        // ONLY ALLOW SUPER USER
+
+                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+                    }
                 } else {
                     return false;
                 }
