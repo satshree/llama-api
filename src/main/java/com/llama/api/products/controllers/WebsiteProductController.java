@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -19,14 +18,14 @@ public class WebsiteProductController {
 
     @GetMapping("/")
     public ResponseEntity<List<ProductSerialized>> getProducts(@RequestParam(required = false) String name, @RequestParam(required = false) String sku) {
-        List<ProductSerialized> allProducts = new ArrayList<>();
+        List<ProductSerialized> allProducts;
 
         if (name != null) {
-            allProducts.addAll(productService.getProductByNameSerialized(name));
+            allProducts = productService.getProductByNameSerialized(name);
         } else if (sku != null) {
-            allProducts.add(productService.getProductBySku(sku));
+            allProducts = productService.getProductBySkuSerialized(sku);
         } else {
-            allProducts.addAll(productService.getAllProductSerialized());
+            allProducts = productService.getAllProductSerialized();
         }
 
         return ResponseEntity.ok(allProducts);
