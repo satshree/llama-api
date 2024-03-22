@@ -56,6 +56,17 @@ public class ProductService {
                 ).collect(Collectors.toList());
     }
 
+    public List<Products> getProductBySku(String sku) {
+        return getAllProducts()
+                .stream()
+                .filter(product ->
+                        product.getSku()
+                                .toLowerCase()
+                                .contains(sku.toLowerCase()
+                                )
+                ).collect(Collectors.toList());
+    }
+
     /*
      * GET SERIALIZED PRODUCT SERVICES
      */
@@ -85,8 +96,14 @@ public class ProductService {
         return allProductSerialized;
     }
 
-    public ProductSerialized getProductBySku(String sku) {
-        return ProductSerialized.serialize(productRepository.findBySku(sku));
+    public List<ProductSerialized> getProductBySkuSerialized(String sku) {
+        List<ProductSerialized> productSerializedList = new ArrayList<>();
+
+        for (Products p : getProductBySku(sku)) {
+            productSerializedList.add(ProductSerialized.serialize(p));
+        }
+
+        return productSerializedList;
     }
 
     /*
