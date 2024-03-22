@@ -32,7 +32,7 @@ public class Products {
     @Column
     String sku;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "category_id")
     ProductCategory category;
 
