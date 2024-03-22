@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -20,6 +21,15 @@ public class ProductSerialized {
     List<ProductImagesSerialized> images;
 
     public static ProductSerialized serialize(Products product) {
+        List<ProductImagesSerialized> imageList = new ArrayList<>();
+        if (product.getProductImages() != null) { // HANDLE NULL IMAGE
+            imageList.addAll(
+                    ProductImagesSerialized.serialize(
+                            product.getProductImages()
+                    )
+            );
+        }
+
         return new ProductSerialized(
                 product.getId().toString(),
                 product.getName(),
@@ -27,7 +37,7 @@ public class ProductSerialized {
                 product.getSku(),
                 product.getPrice(),
                 ProductCategorySerialized.serialize(product.getCategory()),
-                ProductImagesSerialized.serialize(product.getProductImages())
+                imageList
         );
     }
 }

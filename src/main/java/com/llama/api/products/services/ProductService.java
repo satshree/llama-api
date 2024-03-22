@@ -115,14 +115,10 @@ public class ProductService {
 
         BeanUtils.copyProperties(product, productModel);
 
-        // SAVE BEFORE SETTING THE CATEGORY
-        productModel = productRepository.save(productModel);
+        // SET THE CATEGORY
+        productModel = setProductCategory(productModel, product.getCategoryID());
 
-        // SET THE CATEGORY; SAVES PRODUCT AS WELL
-        return setProductCategory(
-                productModel.getId().toString(),
-                product.getCategoryID()
-        );
+        return productModel;
     }
 
     public Products updateProduct(String id, ProductDTO product) throws ResourceNotFound {
@@ -130,14 +126,10 @@ public class ProductService {
 
         BeanUtils.copyProperties(product, productModel);
 
-        // SAVE BEFORE UPDATING THE CATEGORY
-        productModel = productRepository.save(productModel);
+        // UPDATE THE CATEGORY
+        productModel = setProductCategory(productModel, product.getCategoryID());
 
-        // UPDATE THE CATEGORY; SAVES PRODUCT AS WELL
-        return setProductCategory(
-                productModel.getId().toString(),
-                product.getCategoryID()
-        );
+        return productModel;
     }
 
     public Products setProductCategory(String productID, String categoryID) throws ResourceNotFound {
@@ -148,6 +140,13 @@ public class ProductService {
 
         return productRepository.save(product);
     }
+
+    public Products setProductCategory(Products product, String categoryID) throws ResourceNotFound {
+        ProductCategory category = productCategoryService.getCategory(categoryID);
+        product.setCategory(category);
+        return productRepository.save(product);
+    }
+
 
     public void deleteProduct(String id) {
         productRepository.deleteById(UUID.fromString(id));
