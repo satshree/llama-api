@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,6 +51,16 @@ public class ProductImageController {
         Map<String, Object> response = new HashMap<>();
         response.put("uploadedImages", uploadedImages);
         response.put("errors", errors);
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}/")
+    public ResponseEntity<Map<String, String>> deleteImage(@PathVariable("id") String id) throws ResourceNotFound, IOException {
+        productImageService.deleteImage(id);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Image deleted");
 
         return ResponseEntity.ok(response);
     }

@@ -1,6 +1,7 @@
 package com.llama.api.cloudinary;
 
 import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.llama.api.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,5 +24,9 @@ public class CloudinaryServiceImpl {
         options.put("folder", "llama/images/[" + productImageID + "]");
 
         return cloudinary.uploader().upload(file.getBytes(), options);
+    }
+
+    public Map deleteImage(String publicID) throws IOException {
+        return cloudinary.uploader().destroy(publicID, ObjectUtils.asMap("resource_type", "image"));
     }
 }

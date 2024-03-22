@@ -81,7 +81,8 @@ public class ProductImageService {
         return productImageRepository.save(pImage);
     }
 
-    public void deleteImage(String id) {
+    public void deleteImage(String id) throws ResourceNotFound, IOException {
         productImageRepository.deleteById(UUID.fromString(id));
+        cloudinaryService.deleteImage(getImage(id).getCloudinaryPublicID());
     }
 }

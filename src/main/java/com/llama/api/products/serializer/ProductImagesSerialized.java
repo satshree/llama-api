@@ -18,6 +18,7 @@ public class ProductImagesSerialized {
     Integer size;
     String full_name;
     String image;
+    String product_id;
 
     public static List<ProductImagesSerialized> serialize(List<ProductImages> images) {
         List<ProductImagesSerialized> productImagesSerializedList = new ArrayList<>();
@@ -36,7 +37,8 @@ public class ProductImagesSerialized {
                 image.getExt(),
                 image.getSize(),
                 image.getIname(),
-                image.getImage()
+                image.getImage(),
+                image.getProduct().getId().toString()
         );
     }
 }
