@@ -18,7 +18,8 @@ public class Utils {
         List<String> urls = new ArrayList<>();
 
         urls.add("/api/product");
-        
+        urls.add("/api/product-category");
+
         // add more urls as project progresses
 
         return urls;
