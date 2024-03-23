@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +25,12 @@ public class CloudinaryServiceImpl {
         return cloudinary.uploader().upload(file.getBytes(), options);
     }
 
-    public Map deleteImage(String publicID) throws IOException {
-        return cloudinary.uploader().destroy(publicID, ObjectUtils.asMap("resource_type", "image"));
+    public Map deleteImage(String publicID) throws Exception {
+        return cloudinary
+                .api()
+                .deleteResources(
+                        Arrays.asList(publicID),
+                        ObjectUtils.asMap("type", "upload", "resource_type", "image")
+                );
     }
 }
