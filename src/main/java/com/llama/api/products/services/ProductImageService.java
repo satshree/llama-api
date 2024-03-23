@@ -83,7 +83,8 @@ public class ProductImageService {
     }
 
     public void deleteImage(String id) throws Exception {
+        String publicID = getImage(id).getCloudinaryPublicID();
         productImageRepository.deleteById(UUID.fromString(id));
-        cloudinaryService.deleteImage(getImage(id).getCloudinaryPublicID());
+        cloudinaryService.deleteImage(publicID);
     }
 }
