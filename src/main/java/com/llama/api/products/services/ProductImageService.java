@@ -69,6 +69,7 @@ public class ProductImageService {
         Map uploadedImage = cloudinaryService.uploadImage(image, pImage.getId().toString(), productID);
         pImage.setImage(uploadedImage.get("url").toString());
         pImage.setExt(uploadedImage.get("format").toString());
+        pImage.setCloudinaryPublicID(uploadedImage.get("public_id").toString());
 
         // SAVE IMAGE TO DATABASE
         return productImageRepository.save(pImage);
@@ -81,7 +82,7 @@ public class ProductImageService {
         return productImageRepository.save(pImage);
     }
 
-    public void deleteImage(String id) throws ResourceNotFound, IOException {
+    public void deleteImage(String id) throws Exception {
         productImageRepository.deleteById(UUID.fromString(id));
         cloudinaryService.deleteImage(getImage(id).getCloudinaryPublicID());
     }
