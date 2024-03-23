@@ -56,7 +56,7 @@ public class ProductImageController {
     }
 
     @DeleteMapping("/{id}/")
-    public ResponseEntity<Map<String, String>> deleteImage(@PathVariable("id") String id) throws ResourceNotFound, IOException {
+    public ResponseEntity<Map<String, String>> deleteImage(@PathVariable("id") String id) throws Exception {
         productImageService.deleteImage(id);
 
         Map<String, String> response = new HashMap<>();
