@@ -36,4 +36,11 @@ public class Billings {
 
     @OneToMany(mappedBy = "bill")
     List<Orders> orders;
+
+    @OneToMany(mappedBy = "bill")
+    List<Paid> paidList;
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "binfo_id")
+    BillingInfo billingInfo;
 }
