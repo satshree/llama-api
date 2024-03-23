@@ -34,7 +34,7 @@ public class ProductImages {
     @Column
     String cloudinaryPublicID;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     Products product;
 }
