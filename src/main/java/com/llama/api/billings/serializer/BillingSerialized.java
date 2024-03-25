@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -22,6 +23,17 @@ public class BillingSerialized {
     List<OrderSerialized> orders;
 
     public static BillingSerialized serialize(Billings billing) {
+        List<PaidSerialized> paid = new ArrayList<>();
+        List<OrderSerialized> orders = new ArrayList<>();
+
+        if (billing.getOrders() != null) {
+            orders = OrderSerialized.serialize(billing.getOrders());
+        }
+
+        if (billing.getPaidList() != null) {
+            paid = PaidSerialized.serialize(billing.getPaidList());
+        }
+
         return new BillingSerialized(
                 billing.getId().toString(),
                 BillingInfoSerialized.serialize(billing.getBillingInfo()),
@@ -29,8 +41,8 @@ public class BillingSerialized {
                 billing.getDiscount(),
                 billing.getTax(),
                 billing.getGrandTotal(),
-                PaidSerialized.serialize(billing.getPaidList()),
-                OrderSerialized.serialize(billing.getOrders())
+                paid,
+                orders
         );
     }
 }
