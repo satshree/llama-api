@@ -43,6 +43,10 @@ public class BillingInfoService {
     }
 
     public String getBillID(String id) throws ResourceNotFound {
+        System.out.println("WHRTTTT " + billingRepository
+                .findByBillingInfo(
+                        getBillingInfo(id)
+                ));
         return billingRepository
                 .findByBillingInfo(
                         getBillingInfo(id)
