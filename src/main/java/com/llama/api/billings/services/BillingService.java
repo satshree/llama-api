@@ -1,5 +1,7 @@
 package com.llama.api.billings.services;
 
+import com.llama.api.billings.dto.BillingInfoDTO;
+import com.llama.api.billings.models.BillingInfo;
 import com.llama.api.billings.models.Billings;
 import com.llama.api.billings.models.Orders;
 import com.llama.api.billings.repository.BillingRepository;
@@ -7,6 +9,7 @@ import com.llama.api.billings.serializer.BillingSerialized;
 import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.users.models.Users;
 import com.llama.api.users.services.UserService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -73,6 +76,12 @@ public class BillingService {
         return billingRepository.save(billings);
     }
 
+    /**
+     * Use this method with Billings parameter to update bill total when adding order
+     *
+     * @param id
+     * @return Billings
+     */
     public Billings updateTotal(String id) throws ResourceNotFound {
         Billings billings = getBill(id);
 
@@ -93,13 +102,40 @@ public class BillingService {
         return billingRepository.save(billings);
     }
 
-    public Billings createBill(String userID) throws ResourceNotFound {
-        Users user = userService.getUser(userID);
+    /**
+     * Use this method to update bill total when adding order
+     *
+     * @param billings
+     * @return Billings
+     */
+    public Billings updateTotal(Billings billings) {
+        for (Orders o : billings.getOrders()) {
+            billings.setSubtotal(
+                    billings.getSubtotal() + o.getTotal() // STOTAL = STOTAL + (TOTAL = UNIT PRICE * QUANTITY)
+            );
+        }
 
+        billings.setTax(
+                (billings.getSubtotal() / 100) * 6.25 // TEXAS SALES TAX
+        );
+
+        billings.setGrandTotal(
+                billings.getSubtotal() + billings.getTax() - billings.getDiscount()
+        );
+
+        return billingRepository.save(billings);
+    }
+
+    public Billings createBill(BillingInfoDTO billingInfoDTO) {
         Billings billings = new Billings();
+        BillingInfo billingInfo = new BillingInfo();
 
-        billings.setUser(user);
+        BeanUtils.copyProperties(billingInfoDTO, billingInfo);
+        billings.setBillingInfo(
+                billingInfo
+        );
 
+        billings.setSubtotal(0.0d);
         billings.setDiscount(0.0d);
         billings.setTax(0.0d);
         billings.setGrandTotal(0.0d);

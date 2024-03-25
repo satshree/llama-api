@@ -30,17 +30,13 @@ public class Billings {
     @Column(name = "grand_total")
     Double grandTotal;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    Users user;
-
-    @OneToMany(mappedBy = "bill")
+    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
     List<Orders> orders;
 
-    @OneToMany(mappedBy = "bill")
+    @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
     List<Paid> paidList;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "binfo_id")
     BillingInfo billingInfo;
 }

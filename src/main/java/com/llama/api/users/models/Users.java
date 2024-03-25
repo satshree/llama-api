@@ -1,7 +1,6 @@
 package com.llama.api.users.models;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.llama.api.billings.models.Billings;
 import com.llama.api.cart.models.Cart;
 import com.llama.api.wishlist.models.Wishlist;
 import lombok.Data;
@@ -66,9 +65,6 @@ public class Users implements UserDetails {
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     List<Wishlist> wishlists;
-
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    List<Billings> bills;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

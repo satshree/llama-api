@@ -1,6 +1,7 @@
 package com.llama.api.billings.models;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -33,6 +34,9 @@ public class BillingInfo {
 
     @Column
     String city;
+
+    @Column
+    String state;
 
     @Column
     Integer zip;
