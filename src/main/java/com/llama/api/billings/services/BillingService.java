@@ -5,6 +5,7 @@ import com.llama.api.billings.models.BillingInfo;
 import com.llama.api.billings.models.Billings;
 import com.llama.api.billings.models.Orders;
 import com.llama.api.billings.repository.BillingRepository;
+import com.llama.api.billings.repository.OrderRepository;
 import com.llama.api.billings.serializer.BillingSerialized;
 import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.users.models.Users;
@@ -21,6 +22,9 @@ import java.util.UUID;
 public class BillingService {
     @Autowired
     BillingRepository billingRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
 
     @Autowired
     UserService userService;
@@ -100,7 +104,12 @@ public class BillingService {
     public Billings updateTotal(String id) throws ResourceNotFound {
         Billings billings = getBill(id);
 
-        for (Orders o : billings.getOrders()) {
+        List<Orders> orders = orderRepository.findByBill(billings);
+        if (billings.getOrders() != null) {
+            orders = billings.getOrders();
+        }
+
+        for (Orders o : orders) {
             billings.setSubtotal(
                     billings.getSubtotal() + o.getTotal() // STOTAL = STOTAL + (TOTAL = UNIT PRICE * QUANTITY)
             );
@@ -124,7 +133,12 @@ public class BillingService {
      * @return Billings
      */
     public Billings updateTotal(Billings billings) {
-        for (Orders o : billings.getOrders()) {
+        List<Orders> orders = orderRepository.findByBill(billings);
+        if (billings.getOrders() != null) {
+            orders = billings.getOrders();
+        }
+
+        for (Orders o : orders) {
             billings.setSubtotal(
                     billings.getSubtotal() + o.getTotal() // STOTAL = STOTAL + (TOTAL = UNIT PRICE * QUANTITY)
             );

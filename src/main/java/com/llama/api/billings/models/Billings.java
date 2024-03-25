@@ -1,6 +1,5 @@
 package com.llama.api.billings.models;
 
-import com.llama.api.users.models.Users;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,7 +35,7 @@ public class Billings {
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
     List<Paid> paidList;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "binfo_id")
     BillingInfo billingInfo;
 }

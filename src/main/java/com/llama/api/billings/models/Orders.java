@@ -34,6 +34,6 @@ public class Orders {
     Products product;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "billing_id")
+    @JoinColumn(name = "billing_id", referencedColumnName = "billing_id")
     Billings bill;
 }

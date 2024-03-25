@@ -61,17 +61,14 @@ public class OrderService {
 
         order.setTitle(product.getName());
 
-        order = orderRepository.save(order);
-
         // SET QUANTITY AND UPDATE TOTAL
-        order = updateQuantity(order.getId().toString(), quantity);
+        order = updateQuantity(order, quantity);
 
         return order;
     }
 
-    public Orders updateTotal(String orderID) throws ResourceNotFound {
-        Orders order = getOrder(orderID);
 
+    public Orders updateTotal(Orders order) throws ResourceNotFound {
         order.setTotal(
                 order.getUnitPrice() * order.getQuantity()
         );
@@ -79,23 +76,20 @@ public class OrderService {
         order = orderRepository.save(order);
 
         // UPDATE BILL
-        billingService.updateTotal(
-                order.getBill().getId().toString()
-        );
+        billingService.updateTotal(order.getBill());
 
         return order;
     }
 
-    public Orders updateQuantity(String orderID, Integer quantity) throws ResourceNotFound {
+    public Orders updateQuantity(Orders order, Integer quantity) throws ResourceNotFound {
         if (quantity < 0) {
             throw new RuntimeException("Quantity cannot be negative");
         }
 
-        Orders order = getOrder(orderID);
         order.setQuantity(quantity);
 
         orderRepository.save(order);
 
-        return updateTotal(orderID);
+        return updateTotal(order);
     }
 }
