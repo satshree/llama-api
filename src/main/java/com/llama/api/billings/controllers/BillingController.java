@@ -3,9 +3,9 @@ package com.llama.api.billings.controllers;
 import com.llama.api.billings.dto.BillingDTO;
 import com.llama.api.billings.dto.PaidDTO;
 import com.llama.api.billings.models.Billings;
-import com.llama.api.billings.models.Orders;
+//import com.llama.api.billings.models.Orders;
 import com.llama.api.billings.serializer.BillingSerialized;
-import com.llama.api.billings.serializer.OrderSerialized;
+//import com.llama.api.billings.serializer.OrderSerialized;
 import com.llama.api.billings.serializer.PaidSerialized;
 import com.llama.api.billings.services.BillingService;
 import com.llama.api.billings.services.OrderService;
@@ -63,7 +63,7 @@ public class BillingController {
                     i.getQuantity()
             );
 
-//            cartItemService.deleteItem(i.getId().toString()); // REMOVE ITEM FROM CART AFTER ADDING TO BILL
+            cartItemService.deleteItem(i.getId().toString()); // REMOVE ITEM FROM CART AFTER ADDING TO BILL
         }
 
         return ResponseEntity.ok(BillingSerialized.serialize(billings));
