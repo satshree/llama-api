@@ -27,16 +27,8 @@ public class CartController {
     @Autowired
     UserService userService;
 
-    @GetMapping("/get/")
-    public ResponseEntity<CartSerialized> getCart() throws ResourceNotFound {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-
-        return ResponseEntity.ok(cartService.getCartByUsernameSerialized(username));
-    }
-
-    @GetMapping("/get/{id}/")
-    public ResponseEntity<CartSerialized> getCartByID(@PathVariable("id") String id) throws ResourceNotFound {
+    @GetMapping("/{id}/")
+    public ResponseEntity<CartSerialized> getCart(@PathVariable("id") String id) throws ResourceNotFound {
         return ResponseEntity.ok(cartService.getCardByIDSerialized(id));
     }
 
@@ -67,7 +59,7 @@ public class CartController {
         return ResponseEntity.ok(cartSerialized);
     }
 
-    @PostMapping("/add/{id}/")
+    @PostMapping("/{id}/")
     public ResponseEntity<CartSerialized> addToCart(@PathVariable("id") String id, @Valid @RequestBody CartItemDTO cartItemDTO) throws ResourceNotFound {
         CartItems cartItem = cartItemService.addItem(
                 id,
@@ -82,7 +74,7 @@ public class CartController {
         );
     }
 
-    @DeleteMapping("/remove/{id}/")
+    @DeleteMapping("/{id}/")
     public ResponseEntity<CartSerialized> removeFromCart(@PathVariable("id") String id) throws ResourceNotFound {
         CartItems item = cartItemService.getItem(id);
 
