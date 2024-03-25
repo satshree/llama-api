@@ -30,7 +30,15 @@ public class UserSerialized {
 
     String date_joined;
 
+    String cart_id = null;
+
     public static UserSerialized serialize(Users user) {
+        String cartID = null;
+
+        if (user.getCart() != null) {
+            cartID = user.getCart().getId().toString();
+        }
+
         return new UserSerialized(
                 user.getId().toString(),
                 user.getFirstName(),
@@ -41,7 +49,8 @@ public class UserSerialized {
                 user.getUserProfile().getPhone(),
                 user.getIsSuper(),
                 Utils.parseDate(user.getLastLogin()),
-                Utils.parseDate(user.getDateJoined())
+                Utils.parseDate(user.getDateJoined()),
+                cartID
         );
     }
 }
