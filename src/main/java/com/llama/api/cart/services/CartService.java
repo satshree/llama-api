@@ -31,6 +31,16 @@ public class CartService {
         return CartSerialized.serialize(getCart(userID));
     }
 
+    public Cart getCartByUsername(String username) throws ResourceNotFound {
+        Users user = userService.getUserByUsername(username);
+
+        return cartRepository.findByUser(user);
+    }
+
+    public CartSerialized getCartByUsernameSerialized(String username) throws ResourceNotFound {
+        return CartSerialized.serialize(getCartByUsername(username));
+    }
+
     public Cart getCartByID(String id) throws ResourceNotFound {
         return cartRepository
                 .findById(
@@ -49,6 +59,14 @@ public class CartService {
 
         Cart cart = new Cart();
         cart.setUser(user);
+        cart.setUpdated(new Date());
+        cart.setTotal(0.0d);
+
+        return cartRepository.save(cart);
+    }
+
+    public Cart createCart() {
+        Cart cart = new Cart();
         cart.setUpdated(new Date());
         cart.setTotal(0.0d);
 
