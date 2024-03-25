@@ -10,6 +10,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -25,6 +26,14 @@ public class BillingInfoService {
                 .findById(
                         UUID.fromString(id)
                 ).orElseThrow(
+                        () -> new ResourceNotFound("Info not found")
+                );
+    }
+
+    public List<BillingInfo> getBillingInfoByEmail(String email) throws ResourceNotFound {
+        return billingInfoRepository
+                .findByEmail(email)
+                .orElseThrow(
                         () -> new ResourceNotFound("Info not found")
                 );
     }

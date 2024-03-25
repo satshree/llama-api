@@ -8,9 +8,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PaidDTO {
-    String card;
-    Double amount;
+public class OrdersDTO {
     @JsonProperty("bill_id")
     String billID = null;
+    @JsonProperty("product_id")
+    String productID;
+    Integer quantity = 1;
 }

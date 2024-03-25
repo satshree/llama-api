@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*", maxAge = 3600) // change later to only accept from frontend applications
 @RestController
-@RequestMapping("/api/cart")
+@RequestMapping("/api/website/cart")
 public class CartController {
     @Autowired
     CartService cartService;

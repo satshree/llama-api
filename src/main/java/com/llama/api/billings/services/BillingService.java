@@ -25,14 +25,29 @@ public class BillingService {
     @Autowired
     UserService userService;
 
+    @Autowired
+    BillingInfoService billingInfoService;
+
     public List<Billings> getAllBillings() {
         return billingRepository.findAll();
     }
 
     public List<Billings> getAllBillings(String userID) throws ResourceNotFound {
         Users user = userService.getUser(userID);
+        List<BillingInfo> billingInfoList = billingInfoService
+                .getBillingInfoByEmail(
+                        user.getEmail()
+                );
 
-        return billingRepository.findByUser(user);
+        List<Billings> billings = new ArrayList<>();
+
+        for (BillingInfo b : billingInfoList) {
+            billings.add(
+                    billingRepository.findByBillingInfo(b)
+            );
+        }
+
+        return billings;
     }
 
     public List<BillingSerialized> getAllBillingSerialized() {

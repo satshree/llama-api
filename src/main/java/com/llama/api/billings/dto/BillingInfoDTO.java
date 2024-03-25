@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class BillingInfoDTO {
     @JsonProperty("bill_id")
-    String billID;
+    String billID = null;
     @JsonProperty("first_name")
     String firstName;
     @JsonProperty("last_name")
