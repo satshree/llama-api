@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*", maxAge = 3600) // change later to only accept from frontend applications
 @RestController
 @RequestMapping("/api/website/billing")
 public class BillingController {

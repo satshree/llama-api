@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.HashMap;
 
-@CrossOrigin(origins = "*", maxAge = 3600) // change later to only accept from frontend applications
 @RestController
 @RequestMapping("/api/auth")
 public class AuthenticationController {

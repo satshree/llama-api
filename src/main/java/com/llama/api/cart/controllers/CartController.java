@@ -14,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "*", maxAge = 3600) // change later to only accept from frontend applications
 @RestController
 @RequestMapping("/api/website/cart")
 public class CartController {
@@ -36,12 +35,9 @@ public class CartController {
     public ResponseEntity<CartSerialized> createCart() {
         CartSerialized cartSerialized;
 
-        System.out.println("HERE");
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
-
-            System.out.println("USERNAME " + username);
 
             cartSerialized = CartSerialized
                     .serialize(
@@ -53,7 +49,6 @@ public class CartController {
                             )
                     );
         } catch (Exception e) {
-            System.out.println("WHAT? " + e);
             cartSerialized = CartSerialized
                     .serialize(
                             cartService.createCart()

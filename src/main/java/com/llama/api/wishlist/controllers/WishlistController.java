@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@CrossOrigin(origins = "*", maxAge = 3600) // change later to only accept from frontend applications
 @RestController
 @RequestMapping("/api/wishlist")
 public class WishlistController {
