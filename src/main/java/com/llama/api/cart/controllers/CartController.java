@@ -36,9 +36,12 @@ public class CartController {
     public ResponseEntity<CartSerialized> createCart() {
         CartSerialized cartSerialized;
 
+        System.out.println("HERE");
         try {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             String username = authentication.getName();
+
+            System.out.println("USERNAME " + username);
 
             cartSerialized = CartSerialized
                     .serialize(
@@ -50,6 +53,7 @@ public class CartController {
                             )
                     );
         } catch (Exception e) {
+            System.out.println("WHAT? " + e);
             cartSerialized = CartSerialized
                     .serialize(
                             cartService.createCart()
