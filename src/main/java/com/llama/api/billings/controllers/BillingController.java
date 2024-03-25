@@ -56,8 +56,8 @@ public class BillingController {
 
         for (CartItems i : cart.getCartItems()) {
             orderService.createOrder(
-                    billings.getId().toString(),
                     i.getProduct().getId().toString(),
+                    billings.getId().toString(),
                     i.getQuantity()
             );
 
