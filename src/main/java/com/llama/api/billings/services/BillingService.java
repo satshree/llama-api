@@ -68,7 +68,9 @@ public class BillingService {
         List<BillingSerialized> billingSerializedList = new ArrayList<>();
 
         for (Billings b : getAllBillings(userID)) {
-            billingSerializedList.add(BillingSerialized.serialize(b));
+            if (b != null) {
+                billingSerializedList.add(BillingSerialized.serialize(b));
+            }
         }
 
         return billingSerializedList;
