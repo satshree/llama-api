@@ -1,0 +1,40 @@
+package com.llama.api.cart.serializer;
+
+import com.llama.api.cart.models.CartItems;
+import com.llama.api.products.serializer.ProductSerialized;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CartItemSerialized {
+    String id;
+    ProductSerialized product;
+    Integer quantity;
+    Double total;
+
+    public static CartItemSerialized serialize(CartItems item) {
+        return new CartItemSerialized(
+                item.getId().toString(),
+                ProductSerialized.serialize(item.getProduct()),
+                item.getQuantity(),
+                (item.getProduct().getPrice() * item.getQuantity()) // UNIT PRICE X QUANTITY
+        );
+    }
+
+    public static List<CartItemSerialized> serialize(List<CartItems> items) {
+        List<CartItemSerialized> cartItemSerializedList = new ArrayList<>();
+
+        for (CartItems i : items) {
+            cartItemSerializedList.add(CartItemSerialized.serialize(i));
+        }
+
+        return cartItemSerializedList;
+    }
+}
+
