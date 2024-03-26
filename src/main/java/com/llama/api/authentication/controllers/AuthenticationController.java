@@ -68,7 +68,8 @@ public class AuthenticationController {
                                 refreshToken,
                                 "Bearer",
                                 user.getId(),
-                                user.getUsername()
+                                user.getUsername(),
+                                user.getIsSuper()
                         )
                 );
     }
