@@ -2,6 +2,7 @@ package com.llama.api.cart.controllers;
 
 import com.llama.api.cart.dto.CartItemDTO;
 import com.llama.api.cart.models.CartItems;
+import com.llama.api.cart.requests.CreateCartRequest;
 import com.llama.api.cart.serializer.CartSerialized;
 import com.llama.api.cart.services.CartItemService;
 import com.llama.api.cart.services.CartService;
@@ -9,10 +10,13 @@ import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.users.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/website/cart")
@@ -32,23 +36,17 @@ public class CartController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<CartSerialized> createCart() {
+    public ResponseEntity<CartSerialized> createCart(@Valid @RequestBody Optional<CreateCartRequest> createCartRequest) throws ResourceNotFound {
         CartSerialized cartSerialized;
 
-        try {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            String username = authentication.getName();
+        if (createCartRequest.isPresent()) {
+            String userID = createCartRequest.get().getUserID();
 
             cartSerialized = CartSerialized
                     .serialize(
-                            cartService.createCart(
-                                    userService
-                                            .getUserByUsername(username)
-                                            .getId()
-                                            .toString()
-                            )
+                            cartService.createCart(userID)
                     );
-        } catch (Exception e) {
+        } else {
             cartSerialized = CartSerialized
                     .serialize(
                             cartService.createCart()
