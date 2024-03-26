@@ -57,12 +57,16 @@ public class CartService {
     public Cart createCart(String userID) throws ResourceNotFound {
         Users user = userService.getUser(userID);
 
-        Cart cart = new Cart();
-        cart.setUser(user);
-        cart.setUpdated(new Date());
-        cart.setTotal(0.0d);
+        try {
+            return getCart(userID);
+        } catch (ResourceNotFound e) {
+            Cart cart = new Cart();
+            cart.setUser(user);
+            cart.setUpdated(new Date());
+            cart.setTotal(0.0d);
 
-        return cartRepository.save(cart);
+            return cartRepository.save(cart);
+        }
     }
 
     public Cart createCart() {
