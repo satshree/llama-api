@@ -47,6 +47,10 @@ public class PaidService {
     }
 
     public Paid addPaid(PaidDTO paidDTO) throws ResourceNotFound {
+        if (paidDTO.getCard().length() != 16) {
+            throw new RuntimeException("Card must be 16 digits");
+        }
+
         Paid paid = new Paid();
         Billings billings = billingService.getBill(paidDTO.getBillID());
 

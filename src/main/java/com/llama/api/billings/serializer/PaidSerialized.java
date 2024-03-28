@@ -22,7 +22,7 @@ public class PaidSerialized {
     public static PaidSerialized serialize(Paid paid) {
         return new PaidSerialized(
                 paid.getId().toString(),
-                paid.getCard(),
+                paid.getCard().substring(12, 16),
                 paid.getAmount(),
                 paid.getBill().getId().toString()
         );
