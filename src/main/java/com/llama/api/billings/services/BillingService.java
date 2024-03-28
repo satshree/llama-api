@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -166,6 +167,7 @@ public class BillingService {
                 billingInfo
         );
 
+        billings.setDate(new Date());
         billings.setSubtotal(0.0d);
         billings.setDiscount(0.0d);
         billings.setTax(0.0d);

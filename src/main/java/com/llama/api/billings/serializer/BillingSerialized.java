@@ -1,5 +1,6 @@
 package com.llama.api.billings.serializer;
 
+import com.llama.api.Utils;
 import com.llama.api.billings.models.Billings;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,7 @@ public class BillingSerialized {
     Double discount;
     Double tax;
     Double grand_total;
+    String date;
 
     List<PaidSerialized> paid;
     List<OrderSerialized> orders;
@@ -41,6 +43,7 @@ public class BillingSerialized {
                 billing.getDiscount(),
                 billing.getTax(),
                 billing.getGrandTotal(),
+                Utils.parseDate(billing.getDate()),
                 paid,
                 orders
         );
