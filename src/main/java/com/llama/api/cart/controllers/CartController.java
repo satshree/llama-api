@@ -7,13 +7,11 @@ import com.llama.api.cart.serializer.CartSerialized;
 import com.llama.api.cart.services.CartItemService;
 import com.llama.api.cart.services.CartService;
 import com.llama.api.exceptions.ResourceNotFound;
+import com.llama.api.users.models.Users;
 import com.llama.api.users.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -30,9 +28,27 @@ public class CartController {
     @Autowired
     UserService userService;
 
+    @GetMapping("/")
+    public ResponseEntity<CartSerialized> getCart(@RequestParam(name = "user", required = false) String user) throws ResourceNotFound {
+        CartSerialized cart;
+
+        if (user != null) {
+            Users userModel = userService.getUser(user);
+            if (userModel.getCart() != null) {
+                cart = CartSerialized.serialize(userModel.getCart());
+            } else {
+                cart = CartSerialized.serialize(cartService.createCart(user));
+            }
+        } else {
+            cart = CartSerialized.serialize(cartService.createCart());
+        }
+
+        return ResponseEntity.ok(cart);
+    }
+
     @GetMapping("/{id}/")
-    public ResponseEntity<CartSerialized> getCart(@PathVariable("id") String id) throws ResourceNotFound {
-        return ResponseEntity.ok(cartService.getCardByIDSerialized(id));
+    public ResponseEntity<CartSerialized> getCartByID(@PathVariable("id") String id) throws ResourceNotFound {
+        return ResponseEntity.ok(cartService.getCartByIDSerialized(id));
     }
 
     @PostMapping("/")

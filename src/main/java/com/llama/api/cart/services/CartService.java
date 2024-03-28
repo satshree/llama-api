@@ -24,7 +24,11 @@ public class CartService {
     public Cart getCart(String userID) throws ResourceNotFound {
         Users user = userService.getUser(userID);
 
-        return cartRepository.findByUser(user);
+        return cartRepository
+                .findByUser(user)
+                .orElseThrow(
+                        () -> new ResourceNotFound("Cart does not exist")
+                );
     }
 
     public CartSerialized getCartSerialized(String userID) throws ResourceNotFound {
@@ -34,7 +38,11 @@ public class CartService {
     public Cart getCartByUsername(String username) throws ResourceNotFound {
         Users user = userService.getUserByUsername(username);
 
-        return cartRepository.findByUser(user);
+        return cartRepository
+                .findByUser(user)
+                .orElseThrow(
+                        () -> new ResourceNotFound("Cart does not exist")
+                );
     }
 
     public CartSerialized getCartByUsernameSerialized(String username) throws ResourceNotFound {
@@ -50,16 +58,16 @@ public class CartService {
                 );
     }
 
-    public CartSerialized getCardByIDSerialized(String id) throws ResourceNotFound {
+    public CartSerialized getCartByIDSerialized(String id) throws ResourceNotFound {
         return CartSerialized.serialize(getCartByID(id));
     }
 
     public Cart createCart(String userID) throws ResourceNotFound {
-        Users user = userService.getUser(userID);
-
         try {
             return getCart(userID);
         } catch (ResourceNotFound e) {
+            Users user = userService.getUser(userID);
+
             Cart cart = new Cart();
             cart.setUser(user);
             cart.setUpdated(new Date());
