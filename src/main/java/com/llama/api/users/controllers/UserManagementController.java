@@ -55,23 +55,23 @@ public class UserManagementController {
             user = userService.addSuperUser(
                     userDTO,
                     userProfileDTO,
-                    userRequest.getPassword()
+                    passwordEncoder.encode(userRequest.getPassword())
             );
         } else {
             user = userService.addUser(
                     userDTO,
                     userProfileDTO,
-                    userRequest.getPassword()
+                    passwordEncoder.encode(userRequest.getPassword())
             );
         }
 
-        if (userRequest.getPassword() != null) {
-            user.setPassword(
-                    passwordEncoder.encode(
-                            userRequest.getPassword()
-                    )
-            );
-        }
+//        if (userRequest.getPassword() != null) {
+//            user.setPassword(
+//                    passwordEncoder.encode(
+//                            userRequest.getPassword()
+//                    )
+//            );
+//        }
 
         return ResponseEntity.ok(UserSerialized.serialize(user));
     }

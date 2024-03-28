@@ -172,7 +172,6 @@ public class UserService implements UserDetailsService {
     }
 
     public Users setPassword(Users user, String password) {
-        UserUtils utils = new UserUtils();
         user.setPassword(password);
         return user;
     }
