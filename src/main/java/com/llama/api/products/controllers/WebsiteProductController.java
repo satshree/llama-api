@@ -16,15 +16,23 @@ public class WebsiteProductController {
     ProductService productService;
 
     @GetMapping("/")
-    public ResponseEntity<List<ProductSerialized>> getProducts(@RequestParam(required = false) String name, @RequestParam(required = false) String sku) {
-        List<ProductSerialized> allProducts;
+    public ResponseEntity<List<ProductSerialized>> getProducts(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String sku,
+            @RequestParam(required = false) String category
+    ) {
+        List<ProductSerialized> allProducts = productService.getAllProductSerialized();
 
         if (name != null) {
             allProducts = productService.getProductByNameSerialized(name);
-        } else if (sku != null) {
+        }
+
+        if (sku != null) {
             allProducts = productService.getProductBySkuSerialized(sku);
-        } else {
-            allProducts = productService.getAllProductSerialized();
+        }
+
+        if (category != null) {
+            allProducts = productService.getProductByCategorySerialized(category);
         }
 
         return ResponseEntity.ok(allProducts);
