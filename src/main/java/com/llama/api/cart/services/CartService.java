@@ -2,6 +2,7 @@ package com.llama.api.cart.services;
 
 import com.llama.api.cart.models.Cart;
 import com.llama.api.cart.models.CartItems;
+import com.llama.api.cart.repository.CartItemRepository;
 import com.llama.api.cart.repository.CartRepository;
 import com.llama.api.cart.serializer.CartSerialized;
 import com.llama.api.exceptions.ResourceNotFound;
@@ -19,6 +20,9 @@ import java.util.UUID;
 public class CartService {
     @Autowired
     CartRepository cartRepository;
+
+    @Autowired
+    CartItemRepository cartItemRepository;
 
     @Autowired
     UserService userService;
@@ -104,7 +108,7 @@ public class CartService {
         return cartRepository.save(cart);
     }
 
-    public Cart updateCart(Cart cart) throws ResourceNotFound {
+    public Cart updateCart(Cart cart) {
         cart.setUpdated(new Date());
         cart.setTotal(0.0d);
 
@@ -117,5 +121,17 @@ public class CartService {
         }
 
         return cartRepository.save(cart);
+    }
+
+    public Cart clearCart(Cart cart) {
+        for (CartItems i : cart.getCartItems()) {
+            cart.getCartItems().remove(i);
+            cartRepository.save(cart);
+            cartItemRepository.delete(i);
+        }
+
+        cart = updateCart(cart);
+
+        return cart;
     }
 }
