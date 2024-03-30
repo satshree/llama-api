@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/website/billing")
@@ -47,6 +48,25 @@ public class BillingController {
     @GetMapping("/get-my-bills/{userID}/")
     public ResponseEntity<List<BillingSerialized>> getBills(@PathVariable("userID") String userID) throws ResourceNotFound {
         return ResponseEntity.ok(billingService.getAllBillingSerialized(userID));
+    }
+
+    @GetMapping("/get-by-phone/")
+    public ResponseEntity<List<BillingSerialized>> getBillsByPhone(@RequestParam(name = "phone", required = true) String phone) throws ResourceNotFound {
+        return ResponseEntity.ok(
+                BillingSerialized.serialize(
+                        billingService
+                                .getAllBillings()
+                                .stream()
+                                .filter(billings ->
+                                        billings
+                                                .getBillingInfo()
+                                                .getPhone()
+                                                .equals(phone)
+                                )
+                                .collect(Collectors.toList())
+                )
+        );
+
     }
 
     @GetMapping("/get/{id}/")

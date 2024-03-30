@@ -48,4 +48,14 @@ public class BillingSerialized {
                 orders
         );
     }
+
+    public static List<BillingSerialized> serialize(List<Billings> billings) {
+        List<BillingSerialized> billingSerializedList = new ArrayList<>();
+
+        for (Billings b : billings) {
+            billingSerializedList.add(serialize(b));
+        }
+        
+        return billingSerializedList;
+    }
 }
