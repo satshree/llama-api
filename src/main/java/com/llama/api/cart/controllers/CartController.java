@@ -95,7 +95,9 @@ public class CartController {
         if (item.getQuantity() > 1) {
             cartItemService.updateItem(item, item.getQuantity() - 1);
         } else {
+            String cartID = item.getCart().getId().toString();
             cartItemService.deleteItem(id);
+            cartService.updateCart(cartID);
         }
 
         return ResponseEntity.ok(
