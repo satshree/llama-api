@@ -3,16 +3,20 @@ package com.llama.api.cart.services;
 import com.llama.api.cart.models.Cart;
 import com.llama.api.cart.models.CartItems;
 import com.llama.api.cart.repository.CartItemRepository;
+import com.llama.api.cart.repository.CartRepository;
 import com.llama.api.cart.serializer.CartItemSerialized;
 import com.llama.api.exceptions.ResourceNotFound;
 import com.llama.api.products.models.Products;
 import com.llama.api.products.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class CartItemService {
     @Autowired
     CartItemRepository cartItemRepository;
@@ -22,6 +26,9 @@ public class CartItemService {
 
     @Autowired
     ProductService productService;
+
+    @Autowired
+    CartRepository cartRepository;
 
     public CartItems getItem(String id) throws ResourceNotFound {
         return cartItemRepository
@@ -64,7 +71,7 @@ public class CartItemService {
             CartItems item = getItemByProductAndCart(product, cart);
 
             // UPDATE CART
-            cartService.updateCart(cartID);
+            cartService.updateCart(cart);
 
             return updateItem(item, item.getQuantity() + 1);
         } else {
@@ -74,12 +81,14 @@ public class CartItemService {
             item.setProduct(product);
             item.setQuantity(quantity);
 
-            CartItems result = cartItemRepository.save(item);
+            item = cartItemRepository.save(item);
 
             // UPDATE CART
-            cartService.updateCart(cartID);
+            cart.setTotal(product.getPrice() * item.getQuantity());
+            cart.setUpdated(new Date());
+            cartRepository.save(cart);
 
-            return result;
+            return item;
         }
 
     }

@@ -9,11 +9,13 @@ import com.llama.api.users.models.Users;
 import com.llama.api.users.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class CartService {
     @Autowired
     CartRepository cartRepository;
