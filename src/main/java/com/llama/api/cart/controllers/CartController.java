@@ -76,27 +76,11 @@ public class CartController {
 
     @PostMapping("/{id}/")
     public ResponseEntity<CartSerialized> addToCart(@PathVariable("id") String id, @Valid @RequestBody CartItemDTO cartItemDTO) throws ResourceNotFound {
-        Cart cart = cartService.getCartByID(id);
-        CartItems cartItem = null;
-
-        for (CartItems c : cart.getCartItems()) {
-            if (c.getProduct().getId().toString().equals(cartItemDTO.getProductID())) {
-                cartItem = cartItemService
-                        .updateItem(
-                                c.getId().toString(),
-                                c.getQuantity() + 1);
-            }
-        }
-
-        if (cartItem == null) {
-            cartItem = cartItemService.addItem(
-                    id,
-                    cartItemDTO.getProductID(),
-                    cartItemDTO.getQuantity()
-            );
-        }
-
-
+        CartItems cartItem = cartItemService.addItem(
+                id,
+                cartItemDTO.getProductID(),
+                cartItemDTO.getQuantity()
+        );
         return ResponseEntity.ok(
                 CartSerialized.serialize(
                         cartItem.getCart()
@@ -108,7 +92,11 @@ public class CartController {
     public ResponseEntity<CartSerialized> removeFromCart(@PathVariable("id") String id) throws ResourceNotFound {
         CartItems item = cartItemService.getItem(id);
 
-        cartItemService.deleteItem(id);
+        if (item.getQuantity() > 1) {
+            cartItemService.updateItem(item, item.getQuantity() - 1);
+        } else {
+            cartItemService.deleteItem(id);
+        }
 
         return ResponseEntity.ok(
                 CartSerialized

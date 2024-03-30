@@ -89,6 +89,22 @@ public class CartService {
         Cart cart = getCartByID(id);
 
         cart.setUpdated(new Date());
+        cart.setTotal(0.0d);
+
+        for (CartItems i : cart.getCartItems()) {
+            cart.setTotal(
+                    cart.getTotal() + (
+                            i.getProduct().getPrice() * i.getQuantity() // PRODUCT PRICE X QUANTITY
+                    )
+            );
+        }
+
+        return cartRepository.save(cart);
+    }
+
+    public Cart updateCart(Cart cart) throws ResourceNotFound {
+        cart.setUpdated(new Date());
+        cart.setTotal(0.0d);
 
         for (CartItems i : cart.getCartItems()) {
             cart.setTotal(

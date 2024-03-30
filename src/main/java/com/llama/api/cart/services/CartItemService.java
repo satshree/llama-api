@@ -32,6 +32,26 @@ public class CartItemService {
                 );
     }
 
+    public CartItems getItemByProductAndCart(String productID, String cartID) throws ResourceNotFound {
+        Products product = productService.getProduct(productID);
+        Cart cart = cartService.getCartByID(cartID);
+        return cartItemRepository
+                .findByProductAndCart(
+                        product, cart
+                ).orElseThrow(
+                        () -> new ResourceNotFound("Item does not exist")
+                );
+    }
+
+    public CartItems getItemByProductAndCart(Products product, Cart cart) throws ResourceNotFound {
+        return cartItemRepository
+                .findByProductAndCart(
+                        product, cart
+                ).orElseThrow(
+                        () -> new ResourceNotFound("Item does not exist")
+                );
+    }
+
     public CartItemSerialized getItemSerialized(String id) throws ResourceNotFound {
         return CartItemSerialized.serialize(getItem(id));
     }
@@ -40,21 +60,43 @@ public class CartItemService {
         Products product = productService.getProduct(productID);
         Cart cart = cartService.getCartByID(cartID);
 
-        CartItems item = new CartItems();
-        item.setCart(cart);
-        item.setProduct(product);
+        if (cartItemRepository.existsByProductAndCart(product, cart)) {
+            CartItems item = getItemByProductAndCart(product, cart);
+
+            // UPDATE CART
+            cartService.updateCart(cartID);
+
+            return updateItem(item, item.getQuantity() + 1);
+        } else {
+            CartItems item = new CartItems();
+            item.setOrder(cart.getCartItems().size() + 1);
+            item.setCart(cart);
+            item.setProduct(product);
+            item.setQuantity(quantity);
+
+            CartItems result = cartItemRepository.save(item);
+
+            // UPDATE CART
+            cartService.updateCart(cartID);
+
+            return result;
+        }
+
+    }
+
+    public CartItems updateItem(String id, Integer quantity) throws ResourceNotFound {
+        CartItems item = getItem(id);
         item.setQuantity(quantity);
 
         CartItems result = cartItemRepository.save(item);
 
         // UPDATE CART
-        cartService.updateCart(cartID);
+        cartService.updateCart(item.getCart().getId().toString());
 
         return result;
     }
 
-    public CartItems updateItem(String id, Integer quantity) throws ResourceNotFound {
-        CartItems item = getItem(id);
+    public CartItems updateItem(CartItems item, Integer quantity) throws ResourceNotFound {
         item.setQuantity(quantity);
 
         CartItems result = cartItemRepository.save(item);

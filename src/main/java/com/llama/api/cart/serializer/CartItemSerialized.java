@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 @Data
@@ -14,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class CartItemSerialized {
     String id;
+    Integer order;
     ProductSerialized product;
     Integer quantity;
     Double total;
@@ -21,6 +24,7 @@ public class CartItemSerialized {
     public static CartItemSerialized serialize(CartItems item) {
         return new CartItemSerialized(
                 item.getId().toString(),
+                item.getOrder(),
                 ProductSerialized.serialize(item.getProduct()),
                 item.getQuantity(),
                 (item.getProduct().getPrice() * item.getQuantity()) // UNIT PRICE X QUANTITY
@@ -33,6 +37,8 @@ public class CartItemSerialized {
         for (CartItems i : items) {
             cartItemSerializedList.add(CartItemSerialized.serialize(i));
         }
+
+        cartItemSerializedList.sort(Comparator.comparing(CartItemSerialized::getOrder));
 
         return cartItemSerializedList;
     }
