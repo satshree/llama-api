@@ -12,8 +12,8 @@ import com.llama.api.billings.services.OrderService;
 import com.llama.api.billings.services.PaidService;
 import com.llama.api.cart.models.Cart;
 import com.llama.api.cart.models.CartItems;
+import com.llama.api.cart.repository.CartItemRepository;
 import com.llama.api.cart.repository.CartRepository;
-import com.llama.api.cart.services.CartItemService;
 import com.llama.api.cart.services.CartService;
 import com.llama.api.exceptions.ResourceNotFound;
 import jakarta.validation.Valid;
@@ -39,10 +39,10 @@ public class BillingController {
     PaidService paidService;
 
     @Autowired
-    CartItemService cartItemService;
+    CartRepository cartRepository;
 
     @Autowired
-    CartRepository cartRepository;
+    CartItemRepository cartItemRepository;
 
     @GetMapping("/get-my-bills/{userID}/")
     public ResponseEntity<List<BillingSerialized>> getBills(@PathVariable("userID") String userID) throws ResourceNotFound {
@@ -65,9 +65,11 @@ public class BillingController {
                     billings,
                     i.getQuantity()
             );
+            cartItemRepository.forceDeleteItem(i.getId());
         }
 
-        cartService.clearCart(cart);
+        cart.setTotal(0.0d);
+        cartRepository.save(cart);
 
         return ResponseEntity.ok(BillingSerialized.serialize(billings));
     }
