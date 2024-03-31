@@ -143,6 +143,7 @@ public class BillingService {
             orders = billings.getOrders();
         }
 
+        billings.setSubtotal(0.0d);
         for (Orders o : orders) {
             billings.setSubtotal(
                     billings.getSubtotal() + o.getTotal() // STOTAL = STOTAL + (TOTAL = UNIT PRICE * QUANTITY)
