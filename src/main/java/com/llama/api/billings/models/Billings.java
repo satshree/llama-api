@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,6 +29,9 @@ public class Billings {
 
     @Column(name = "grand_total")
     Double grandTotal;
+    
+    @Column
+    Date date;
 
     @OneToMany(mappedBy = "bill", cascade = CascadeType.ALL)
     List<Orders> orders;

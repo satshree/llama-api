@@ -9,6 +9,7 @@ import com.llama.api.products.models.Products;
 import com.llama.api.products.services.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,6 +17,7 @@ import java.util.UUID;
 //import static java.lang.String.format;
 
 @Service
+@Transactional
 public class OrderService {
     @Autowired
     OrderRepository orderRepository;
@@ -52,6 +54,23 @@ public class OrderService {
     public Orders createOrder(String productID, String billID, Integer quantity) throws ResourceNotFound {
         Products product = productService.getProduct(productID);
         Billings bill = billingService.getBill(billID);
+
+        Orders order = new Orders();
+
+        order.setBill(bill);
+        order.setProduct(product);
+        order.setUnitPrice(product.getPrice());
+
+        order.setTitle(product.getName());
+
+        // SET QUANTITY AND UPDATE TOTAL
+        order = updateQuantity(order, quantity);
+
+        return order;
+    }
+
+    public Orders createOrder(String productID, Billings bill, Integer quantity) throws ResourceNotFound {
+        Products product = productService.getProduct(productID);
 
         Orders order = new Orders();
 

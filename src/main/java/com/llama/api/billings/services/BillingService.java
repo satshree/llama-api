@@ -13,12 +13,15 @@ import com.llama.api.users.services.UserService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
 @Service
+@Transactional
 public class BillingService {
     @Autowired
     BillingRepository billingRepository;
@@ -68,7 +71,9 @@ public class BillingService {
         List<BillingSerialized> billingSerializedList = new ArrayList<>();
 
         for (Billings b : getAllBillings(userID)) {
-            billingSerializedList.add(BillingSerialized.serialize(b));
+            if (b != null) {
+                billingSerializedList.add(BillingSerialized.serialize(b));
+            }
         }
 
         return billingSerializedList;
@@ -164,6 +169,7 @@ public class BillingService {
                 billingInfo
         );
 
+        billings.setDate(new Date());
         billings.setSubtotal(0.0d);
         billings.setDiscount(0.0d);
         billings.setTax(0.0d);

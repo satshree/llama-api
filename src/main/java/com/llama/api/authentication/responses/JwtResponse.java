@@ -13,4 +13,5 @@ public class JwtResponse {
     String type = "Bearer";
     UUID id;
     String username;
+    Boolean isSuper;
 }

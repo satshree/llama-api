@@ -28,6 +28,6 @@ public class Cart {
     @OneToOne(fetch = FetchType.LAZY)
     Users user;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "cart", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     List<CartItems> cartItems;
 }

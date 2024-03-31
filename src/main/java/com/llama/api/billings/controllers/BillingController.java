@@ -12,7 +12,8 @@ import com.llama.api.billings.services.OrderService;
 import com.llama.api.billings.services.PaidService;
 import com.llama.api.cart.models.Cart;
 import com.llama.api.cart.models.CartItems;
-import com.llama.api.cart.services.CartItemService;
+import com.llama.api.cart.repository.CartItemRepository;
+import com.llama.api.cart.repository.CartRepository;
 import com.llama.api.cart.services.CartService;
 import com.llama.api.exceptions.ResourceNotFound;
 import jakarta.validation.Valid;
@@ -21,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/website/billing")
@@ -35,14 +37,36 @@ public class BillingController {
     CartService cartService;
 
     @Autowired
-    CartItemService cartItemService;
+    PaidService paidService;
 
     @Autowired
-    PaidService paidService;
+    CartRepository cartRepository;
+
+    @Autowired
+    CartItemRepository cartItemRepository;
 
     @GetMapping("/get-my-bills/{userID}/")
     public ResponseEntity<List<BillingSerialized>> getBills(@PathVariable("userID") String userID) throws ResourceNotFound {
         return ResponseEntity.ok(billingService.getAllBillingSerialized(userID));
+    }
+
+    @GetMapping("/get-by-phone/")
+    public ResponseEntity<List<BillingSerialized>> getBillsByPhone(@RequestParam(name = "phone", required = true) String phone) throws ResourceNotFound {
+        return ResponseEntity.ok(
+                BillingSerialized.serialize(
+                        billingService
+                                .getAllBillings()
+                                .stream()
+                                .filter(billings ->
+                                        billings
+                                                .getBillingInfo()
+                                                .getPhone()
+                                                .equals(phone)
+                                )
+                                .collect(Collectors.toList())
+                )
+        );
+
     }
 
     @GetMapping("/get/{id}/")
@@ -58,12 +82,14 @@ public class BillingController {
         for (CartItems i : cart.getCartItems()) {
             orderService.createOrder(
                     i.getProduct().getId().toString(),
-                    billings.getId().toString(),
+                    billings,
                     i.getQuantity()
             );
-
-            cartItemService.deleteItem(i.getId().toString()); // REMOVE ITEM FROM CART AFTER ADDING TO BILL
+            cartItemRepository.forceDeleteItem(i.getId());
         }
+
+        cart.setTotal(0.0d);
+        cartRepository.save(cart);
 
         return ResponseEntity.ok(BillingSerialized.serialize(billings));
     }

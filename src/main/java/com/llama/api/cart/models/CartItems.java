@@ -4,6 +4,7 @@ import com.llama.api.products.models.Products;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.UUID;
 
@@ -17,11 +18,15 @@ public class CartItems {
     @Column(name = "cartitem_id", columnDefinition = "uuid", nullable = false, updatable = false)
     UUID id;
 
-    @ManyToOne
+    @Column(name = "sort_order")
+    @ColumnDefault("0")
+    Integer order = 0;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_id")
     Products product;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cart_id")
     Cart cart;
 

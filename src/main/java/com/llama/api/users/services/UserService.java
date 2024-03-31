@@ -29,6 +29,10 @@ public class UserService implements UserDetailsService {
         return userRepository.findAll();
     }
 
+    public List<Users> getAllSuperUsers() {
+        return userRepository.findByIsSuper(true);
+    }
+
     public List<UserSerialized> getAllUserSerialized() {
         List<UserSerialized> userSerializedList = new ArrayList<>();
 
@@ -168,7 +172,6 @@ public class UserService implements UserDetailsService {
     }
 
     public Users setPassword(Users user, String password) {
-        UserUtils utils = new UserUtils();
         user.setPassword(password);
         return user;
     }

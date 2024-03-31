@@ -59,11 +59,11 @@ public class Users implements UserDetails {
     @JoinColumn(name = "profile_id", referencedColumnName = "profile_id")
     UserProfile userProfile;
 
-    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "cart_id", referencedColumnName = "cart_id")
     Cart cart;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     List<Wishlist> wishlists;
 
     @Override

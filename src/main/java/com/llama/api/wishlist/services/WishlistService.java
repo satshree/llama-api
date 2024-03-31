@@ -76,6 +76,10 @@ public class WishlistService {
     }
 
     private Wishlist createWishlist(String notes, Products product, Users user) throws ResourceNotFound {
+        if (wishlistRepository.existsByProductAndUser(product, user)) {
+            throw new RuntimeException("Already added to wishlist");
+        }
+
         Wishlist wishlist = new Wishlist();
 
         wishlist.setNotes(notes);
