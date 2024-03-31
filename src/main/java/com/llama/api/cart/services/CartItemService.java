@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -70,10 +71,17 @@ public class CartItemService {
         if (cartItemRepository.existsByProductAndCart(product, cart)) {
             CartItems item = getItemByProductAndCart(product, cart);
 
-            // UPDATE CART
-            cartService.updateCart(cart);
+            item.setQuantity(item.getQuantity() + 1);
+            item = cartItemRepository.save(item);
 
-            return updateItem(item, item.getQuantity() + 1);
+            // UPDATE CART
+            cart.setTotal(0.0d);
+            for (CartItems i : cart.getCartItems()) {
+                cart.setTotal(cart.getTotal() + (i.getProduct().getPrice() * i.getQuantity()));
+            }
+            cartRepository.save(cart);
+
+            return item;
         } else {
             CartItems item = new CartItems();
             item.setOrder(cart.getCartItems().size() + 1);
@@ -83,9 +91,16 @@ public class CartItemService {
 
             item = cartItemRepository.save(item);
 
+            List<CartItems> items = cart.getCartItems();
+            items.add(item);
+            cart.setCartItems(items);
+            cartRepository.save(cart);
+
             // UPDATE CART
-            cart.setTotal(product.getPrice() * item.getQuantity());
-            cart.setUpdated(new Date());
+            cart.setTotal(0.0d);
+            for (CartItems i : cart.getCartItems()) {
+                cart.setTotal(cart.getTotal() + (i.getProduct().getPrice() * i.getQuantity()));
+            }
             cartRepository.save(cart);
 
             return item;

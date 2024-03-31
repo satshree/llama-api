@@ -97,6 +97,7 @@ public class CartService {
         cart.setUpdated(new Date());
         cart.setTotal(0.0d);
 
+        System.out.println("CART ITEMS " + cart.getCartItems().size());
         for (CartItems i : cart.getCartItems()) {
             cart.setTotal(
                     cart.getTotal() + (
@@ -111,6 +112,8 @@ public class CartService {
     public Cart updateCart(Cart cart) {
         cart.setUpdated(new Date());
         cart.setTotal(0.0d);
+
+        System.out.println("CART ITEMS " + cart.getCartItems().size());
 
         for (CartItems i : cart.getCartItems()) {
             cart.setTotal(
