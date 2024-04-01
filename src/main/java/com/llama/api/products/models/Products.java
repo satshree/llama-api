@@ -26,7 +26,7 @@ public class Products {
     @Column
     Double price;
 
-    @Column
+    @Column(length = 1000)
     String description;
 
     @Column
